@@ -1,7 +1,7 @@
 package org.arch.oms.mapper;
 
-import org.arch.framework.crud.CrudMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.arch.framework.crud.CrudMapper;
 import org.arch.oms.entity.OrderMasterEntity;
 
 /**
@@ -9,7 +9,7 @@ import org.arch.oms.entity.OrderMasterEntity;
  *
  * @author lait
  * @date 2021年6月13日 下午7:02:32
- * @since  1.0.0
+ * @since 1.0.0
  */
 @Mapper
 public interface OrderMasterMapper extends CrudMapper<OrderMasterEntity> {

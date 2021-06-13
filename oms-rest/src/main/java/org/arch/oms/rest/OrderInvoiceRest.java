@@ -1,21 +1,19 @@
 package org.arch.oms.rest;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.arch.framework.crud.CrudRest;
+import org.arch.oms.api.dto.OrderInvoiceSearchDto;
+import org.arch.oms.api.request.OrderInvoiceRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 /**
-* @description 
-*
-* @author lait
-* @date 2021年6月13日 下午7:02:32
-*/
+ * @author lait
+ * @description
+ * @date 2021年6月13日 下午7:02:32
+ */
 @RestController
 @RequestMapping("orderInvoice")
-public interface OrderInvoiceRest extends CrudRest<OrderInvoiceRequest, Long, OrderInvoiceSearchDto>{
+public interface OrderInvoiceRest extends CrudRest<OrderInvoiceRequest, Long, OrderInvoiceSearchDto> {
 
 
 }
