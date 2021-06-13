@@ -11,6 +11,7 @@
         <module>oms-crud</module>
         <module>oms-api</module>
         <module>oms-rest</module>
+        <module>pms-biz</module>
     </modules>
 
     <dependencyManagement>
