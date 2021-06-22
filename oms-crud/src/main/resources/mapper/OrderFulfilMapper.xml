@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.arch.oms.mapper.OrderFulfilMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="org.arch.oms.entity.OrderFulfil">
+        <id column="id" property="id" />
+        <result column="app_id" property="appId" />
+        <result column="store_no" property="storeNo" />
+        <result column="order_no" property="orderNo" />
+        <result column="fulfil_typ" property="fulfilTyp" />
+        <result column="fulfil_no" property="fulfilNo" />
+        <result column="fulfil_fee" property="fulfilFee" />
+        <result column="fulfil_time" property="fulfilTime" />
+        <result column="arrival_time" property="arrivalTime" />
+        <result column="dt" property="dt" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, app_id, store_no, order_no, fulfil_typ, fulfil_no, fulfil_fee, fulfil_time, arrival_time, dt
+    </sql>
+
+</mapper>

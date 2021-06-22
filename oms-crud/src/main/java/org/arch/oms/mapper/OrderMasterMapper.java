@@ -2,16 +2,17 @@ package org.arch.oms.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.arch.framework.crud.CrudMapper;
-import org.arch.oms.entity.OrderMasterEntity;
+import org.arch.oms.entity.OrderMaster;
 
 /**
- * 订单-订单主体(OrderMaster) 表数据库 Mapper 层
+ * <p>
+ * 订单-订单主体 Mapper 接口
+ * </p>
  *
- * @author lait
- * @date 2021年6月13日 下午7:02:32
- * @since 1.0.0
+ * @author admin
+ * @since 2021-06-22
  */
 @Mapper
-public interface OrderMasterMapper extends CrudMapper<OrderMasterEntity> {
+public interface OrderMasterMapper extends CrudMapper<OrderMaster> {
 
 }

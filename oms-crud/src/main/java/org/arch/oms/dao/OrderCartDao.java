@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.arch.framework.crud.CrudDao;
 import org.arch.framework.crud.CrudServiceImpl;
-import org.arch.oms.entity.OrderCartEntity;
+import org.arch.oms.entity.OrderCart;
 import org.arch.oms.mapper.OrderCartMapper;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +17,6 @@ import org.springframework.stereotype.Repository;
 @Slf4j
 @RequiredArgsConstructor
 @Repository
-public class OrderCartDao extends CrudServiceImpl<OrderCartMapper, OrderCartEntity> implements CrudDao<OrderCartEntity> {
+public class OrderCartDao extends CrudServiceImpl<OrderCartMapper, OrderCart> implements CrudDao<OrderCart> {
     private final OrderCartMapper orderCartMapper;
 }

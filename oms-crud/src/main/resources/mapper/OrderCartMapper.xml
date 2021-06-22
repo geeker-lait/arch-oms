@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.arch.oms.mapper.OrderCartMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="org.arch.oms.entity.OrderCart">
+        <id column="id" property="id" />
+        <result column="app_id" property="appId" />
+        <result column="seller_account_id" property="sellerAccountId" />
+        <result column="seller_account_name" property="sellerAccountName" />
+        <result column="buyer_account_id" property="buyerAccountId" />
+        <result column="buyer_account_name" property="buyerAccountName" />
+        <result column="store_no" property="storeNo" />
+        <result column="product_category_id" property="productCategoryId" />
+        <result column="product_brand" property="productBrand" />
+        <result column="product_id" property="productId" />
+        <result column="product_name" property="productName" />
+        <result column="product_sub_title" property="productSubTitle" />
+        <result column="product_attrs" property="productAttrs" />
+        <result column="product_pic" property="productPic" />
+        <result column="product_sku_no" property="productSkuNo" />
+        <result column="product_sku_code" property="productSkuCode" />
+        <result column="quantity" property="quantity" />
+        <result column="price" property="price" />
+        <result column="state" property="state" />
+        <result column="dt" property="dt" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, app_id, seller_account_id, seller_account_name, buyer_account_id, buyer_account_name, store_no, product_category_id, product_brand, product_id, product_name, product_sub_title, product_attrs, product_pic, product_sku_no, product_sku_code, quantity, price, state, dt
+    </sql>
+
+</mapper>

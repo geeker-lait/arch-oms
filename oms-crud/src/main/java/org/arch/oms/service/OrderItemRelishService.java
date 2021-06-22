@@ -3,8 +3,8 @@ package org.arch.oms.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.arch.framework.crud.CrudService;
-import org.arch.oms.dao.OrderRelishDao;
-import org.arch.oms.entity.OrderRelishEntity;
+import org.arch.oms.dao.OrderItemRelishDao;
+import org.arch.oms.entity.OrderItemRelish;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class OrderRelishService extends CrudService<OrderRelishEntity, Long> {
-    private final OrderRelishDao orderRelishDao = (OrderRelishDao) crudDao;
+public class OrderItemRelishService extends CrudService<OrderItemRelish, Long> {
+    private final OrderItemRelishDao orderRelishDao = (OrderItemRelishDao) crudDao;
 }

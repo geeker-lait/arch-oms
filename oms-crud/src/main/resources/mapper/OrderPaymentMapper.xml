@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.arch.oms.mapper.OrderPaymentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="org.arch.oms.entity.OrderPayment">
+        <id column="id" property="id" />
+        <result column="app_id" property="appId" />
+        <result column="order_no" property="orderNo" />
+        <result column="account_id" property="accountId" />
+        <result column="account_name" property="accountName" />
+        <result column="phone_no" property="phoneNo" />
+        <result column="amount" property="amount" />
+        <result column="pay_seq_no" property="paySeqNo" />
+        <result column="pay_time" property="payTime" />
+        <result column="pay_typ" property="payTyp" />
+        <result column="pay_state" property="payState" />
+        <result column="dt" property="dt" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, app_id, order_no, account_id, account_name, phone_no, amount, pay_seq_no, pay_time, pay_typ, pay_state, dt
+    </sql>
+
+</mapper>

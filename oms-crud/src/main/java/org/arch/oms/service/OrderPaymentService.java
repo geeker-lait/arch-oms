@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.arch.framework.crud.CrudService;
 import org.arch.oms.dao.OrderPaymentDao;
-import org.arch.oms.entity.OrderPaymentEntity;
+import org.arch.oms.entity.OrderPayment;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class OrderPaymentService extends CrudService<OrderPaymentEntity, Long> {
+public class OrderPaymentService extends CrudService<OrderPayment, Long> {
     private final OrderPaymentDao orderPaymentDao = (OrderPaymentDao) crudDao;
 }

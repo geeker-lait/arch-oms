@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.arch.oms.mapper.OrderAddressMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="org.arch.oms.entity.OrderAddress">
+        <id column="id" property="id" />
+        <result column="app_id" property="appId" />
+        <result column="store_no" property="storeNo" />
+        <result column="order_no" property="orderNo" />
+        <result column="user_name" property="userName" />
+        <result column="user_phone" property="userPhone" />
+        <result column="user_typ" property="userTyp" />
+        <result column="country" property="country" />
+        <result column="zipcode" property="zipcode" />
+        <result column="province_no" property="provinceNo" />
+        <result column="province_name" property="provinceName" />
+        <result column="province_short_name" property="provinceShortName" />
+        <result column="city_no" property="cityNo" />
+        <result column="city_name" property="cityName" />
+        <result column="city_short_name" property="cityShortName" />
+        <result column="district_no" property="districtNo" />
+        <result column="district_name" property="districtName" />
+        <result column="street_no" property="streetNo" />
+        <result column="street_name" property="streetName" />
+        <result column="address" property="address" />
+        <result column="dt" property="dt" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, app_id, store_no, order_no, user_name, user_phone, user_typ, country, zipcode, province_no, province_name, province_short_name, city_no, city_name, city_short_name, district_no, district_name, street_no, street_name, address, dt
+    </sql>
+
+</mapper>

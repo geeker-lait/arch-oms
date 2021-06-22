@@ -1,8 +1,8 @@
 package org.arch.oms.rest;
 
 import org.arch.framework.crud.CrudRest;
-import org.arch.oms.api.dto.OrderAdressSearchDto;
-import org.arch.oms.api.request.OrderAdressRequest;
+import org.arch.oms.api.dto.OrderItemRelishSearchDto;
+import org.arch.oms.api.request.OrderItemRelishRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021年6月13日 下午7:02:32
  */
 @RestController
-@RequestMapping("orderAdress")
-public interface OrderAdressRest extends CrudRest<OrderAdressRequest, Long, OrderAdressSearchDto> {
+@RequestMapping("orderItemRelish")
+public interface OrderItemRelishRest extends CrudRest<OrderItemRelishRequest, Long, OrderItemRelishSearchDto> {
 
 
 }

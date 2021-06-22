@@ -2,16 +2,17 @@ package org.arch.oms.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.arch.framework.crud.CrudMapper;
-import org.arch.oms.entity.OrderItemEntity;
+import org.arch.oms.entity.OrderItem;
 
 /**
- * 订单-销售订单项(OrderItem) 表数据库 Mapper 层
+ * <p>
+ * 订单-销售订单项 Mapper 接口
+ * </p>
  *
- * @author lait
- * @date 2021年6月13日 下午7:02:32
- * @since 1.0.0
+ * @author admin
+ * @since 2021-06-22
  */
 @Mapper
-public interface OrderItemMapper extends CrudMapper<OrderItemEntity> {
+public interface OrderItemMapper extends CrudMapper<OrderItem> {
 
 }
