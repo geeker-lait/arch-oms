@@ -16,5 +16,5 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class OrderItemRelishService extends CrudService<OrderItemRelish, Long> {
-    private final OrderItemRelishDao orderRelishDao = (OrderItemRelishDao) crudDao;
+    private final OrderItemRelishDao orderRelishDao;
 }

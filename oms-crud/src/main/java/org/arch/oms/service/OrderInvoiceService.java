@@ -16,5 +16,5 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class OrderInvoiceService extends CrudService<OrderInvoice, Long> {
-    private final OrderInvoiceDao orderInvoiceDao = (OrderInvoiceDao) crudDao;
+    private final OrderInvoiceDao orderInvoiceDao;
 }

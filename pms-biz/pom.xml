@@ -10,5 +10,28 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>pms-biz</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.arch.projects</groupId>
+            <artifactId>oms-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.arch.projects</groupId>
+            <artifactId>oms-crud</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.arch.projects</groupId>
+            <artifactId>framework-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.arch.projects</groupId>
+            <artifactId>oms-rest</artifactId>
+        </dependency>
+        <!-- other -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

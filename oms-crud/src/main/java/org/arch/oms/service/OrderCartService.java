@@ -16,5 +16,5 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class OrderCartService extends CrudService<OrderCart, Long> {
-    private final OrderCartDao orderCartDao = (OrderCartDao) crudDao;
+    private final OrderCartDao orderCartDao;
 }

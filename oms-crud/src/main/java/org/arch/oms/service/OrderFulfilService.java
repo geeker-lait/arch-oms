@@ -16,5 +16,5 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class OrderFulfilService extends CrudService<OrderFulfil, Long> {
-    private final OrderFulfilDao orderFulfilDao = (OrderFulfilDao) crudDao;
+    private final OrderFulfilDao orderFulfilDao;
 }
