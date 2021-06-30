@@ -1,10 +1,12 @@
 package org.arch.oms.rest;
 
-import org.arch.framework.crud.CrudRest;
-import org.arch.oms.api.dto.OrderAddressSearchDto;
-import org.arch.oms.api.request.OrderAddressRequest;
+import org.arch.oms.common.request.OrderAddressRequest;
+import org.arch.oms.common.vo.OrderAddressVo;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author lait
@@ -13,7 +15,18 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("orderAddress")
-public interface OrderAddressRest extends CrudRest<OrderAddressRequest, Long, OrderAddressSearchDto> {
+public interface OrderAddressRest  {
+
+
+    /**
+     * 根据 request 查询
+     * @param request
+     * @return
+     */
+    @PostMapping("getAddress")
+    List<OrderAddressVo> getOrderAddressByRequest(OrderAddressRequest request);
+
+
 
 
 }

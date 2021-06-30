@@ -1,8 +1,8 @@
 package org.arch.oms.rest;
 
-import org.arch.framework.crud.CrudRest;
-import org.arch.oms.api.dto.OrderMasterSearchDto;
-import org.arch.oms.api.request.OrderMasterRequest;
+import org.arch.oms.common.request.OrderSaveRequest;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,7 +13,20 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("orderMaster")
-public interface OrderMasterRest extends CrudRest<OrderMasterRequest, Long, OrderMasterSearchDto> {
+public interface OrderMasterRest {
+
+
+    /**
+     *  根据请求 生成 订单
+     * @param request
+     * @return
+     */
+    @PostMapping("/save")
+    Boolean save(@RequestBody OrderSaveRequest request);
+
+
+
+
 
 
 }

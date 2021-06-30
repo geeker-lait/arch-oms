@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.arch.oms.test.mapper.OrderInvoiceMapper">
+<mapper namespace="org.arch.oms.mapper.OrderInvoiceMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="org.arch.oms.entity.OrderInvoice">
@@ -13,14 +13,14 @@
         <result column="invoice_no" property="invoiceNo" />
         <result column="amount" property="amount" />
         <result column="remark" property="remark" />
-        <result column="invoiceItem" property="invoiceitem" />
-        <result column="user_eamil" property="userEamil" />
+        <result column="invoice_item" property="invoiceItem" />
+        <result column="receive_email" property="receiveEmail" />
         <result column="dt" property="dt" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_id, store_no, order_no, invoice_typ, invoice_title, invoice_no, amount, remark, invoiceItem, user_eamil, dt
+        id, app_id, store_no, order_no, invoice_typ, invoice_title, invoice_no, amount, remark, invoice_item, receive_email, dt
     </sql>
 
 </mapper>

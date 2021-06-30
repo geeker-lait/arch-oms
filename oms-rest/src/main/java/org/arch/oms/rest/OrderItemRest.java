@@ -1,8 +1,5 @@
 package org.arch.oms.rest;
 
-import org.arch.framework.crud.CrudRest;
-import org.arch.oms.api.dto.OrderItemSearchDto;
-import org.arch.oms.api.request.OrderItemRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("orderItem")
-public interface OrderItemRest extends CrudRest<OrderItemRequest, Long, OrderItemSearchDto> {
+public interface OrderItemRest {
 
 
 }

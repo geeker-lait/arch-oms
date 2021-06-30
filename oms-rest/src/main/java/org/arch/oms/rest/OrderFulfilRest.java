@@ -1,8 +1,5 @@
 package org.arch.oms.rest;
 
-import org.arch.framework.crud.CrudRest;
-import org.arch.oms.api.dto.OrderFulfilSearchDto;
-import org.arch.oms.api.request.OrderFulfilRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("orderFulfil")
-public interface OrderFulfilRest extends CrudRest<OrderFulfilRequest, Long, OrderFulfilSearchDto> {
+public interface OrderFulfilRest {
 
 
 }

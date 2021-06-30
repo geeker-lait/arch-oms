@@ -3,8 +3,11 @@ package org.arch.oms.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.arch.framework.crud.CrudService;
+import org.arch.oms.common.ContainerConstants;
+import org.arch.oms.common.enums.CrudServiceTyp;
 import org.arch.oms.dao.OrderAddressDao;
 import org.arch.oms.entity.OrderAddress;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +18,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class OrderAddressService extends CrudService<OrderAddress, Long> {
+public class OrderAddressService extends CrudService<OrderAddress, Long> implements InitializingBean {
     private final OrderAddressDao orderAddressDao;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        ContainerConstants.CRUD_SERVICE_MAP.put(CrudServiceTyp.ORDER_ADDRESS.getValue(), this);
+    }
 }

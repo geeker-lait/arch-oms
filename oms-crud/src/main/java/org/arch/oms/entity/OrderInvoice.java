@@ -1,6 +1,6 @@
 package org.arch.oms.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -28,6 +28,7 @@ public class OrderInvoice extends CrudEntity<OrderInvoice> {
     /**
      * 主键ID
      */
+    @TableId(value = "id")
     private Long id;
 
     /**
@@ -73,13 +74,12 @@ public class OrderInvoice extends CrudEntity<OrderInvoice> {
     /**
      * 开票明细
      */
-    @TableField("invoiceItem")
-    private String invoiceitem;
+    private String invoiceItem;
 
     /**
      * 用户邮箱用来接受字典发票
      */
-    private String userEamil;
+    private String receiveEmail;
 
     /**
      * 时间戳

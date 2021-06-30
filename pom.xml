@@ -12,6 +12,7 @@
         <module>oms-api</module>
         <module>oms-rest</module>
         <module>pms-biz</module>
+        <module>oms-common</module>
     </modules>
 
     <properties>
@@ -51,6 +52,11 @@
             <dependency>
                 <groupId>org.arch.projects</groupId>
                 <artifactId>oms-crud</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.arch.projects</groupId>
+                <artifactId>oms-common</artifactId>
                 <version>0.0.1</version>
             </dependency>
             <!-- other -->

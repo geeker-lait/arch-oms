@@ -16,18 +16,16 @@
     <dependencies>
         <dependency>
             <groupId>org.arch.projects</groupId>
-            <artifactId>oms-api</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.arch.projects</groupId>
             <artifactId>oms-crud</artifactId>
             <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.arch.projects</groupId>
             <artifactId>framework-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.arch.projects</groupId>
+            <artifactId>oms-common</artifactId>
         </dependency>
     </dependencies>
 

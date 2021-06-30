@@ -1,5 +1,7 @@
 package org.arch.oms.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -27,6 +29,7 @@ public class OrderMaster extends CrudEntity<OrderMaster> {
     /**
      * 主键ID
      */
+    @TableId(value = "id", type = IdType.INPUT)
     private Long id;
 
     /**

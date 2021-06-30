@@ -1,5 +1,6 @@
 package org.arch.oms.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -26,6 +27,7 @@ public class OrderAddress extends CrudEntity<OrderAddress> {
     /**
      * 主键ID
      */
+    @TableId(value = "id")
     private Long id;
 
     /**
