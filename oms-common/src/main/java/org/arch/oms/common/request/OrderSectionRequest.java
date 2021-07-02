@@ -25,6 +25,30 @@ public class OrderSectionRequest implements Serializable {
     private boolean orderPayment = Boolean.FALSE;
 
 
+    public boolean getOrderItem() {
+        return orderItem;
+    }
+
+    public boolean getOrderAddress() {
+        return orderAddress;
+    }
+
+    public boolean getOrderInvoice() {
+        return orderInvoice;
+    }
+
+    public boolean getOrderFulfil() {
+        return orderFulfil;
+    }
+
+    public boolean getOrderItemRelish() {
+        return orderItemRelish;
+    }
+
+    public boolean getOrderPayment() {
+        return orderPayment;
+    }
+
     public OrderSectionRequest includeOrderItem() {
         this.orderItem = Boolean.TRUE;
         return this;
@@ -54,5 +78,6 @@ public class OrderSectionRequest implements Serializable {
         this.orderPayment = Boolean.TRUE;
         return this;
     }
+
 
 }

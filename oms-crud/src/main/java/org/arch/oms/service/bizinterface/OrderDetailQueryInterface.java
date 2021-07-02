@@ -1,6 +1,7 @@
 package org.arch.oms.service.bizinterface;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单子项表 查询接口
@@ -17,6 +18,13 @@ public interface OrderDetailQueryInterface {
      * @return
      */
     List<Object> queryByOrderId(Long orderNo);
+
+    /**
+     * 根据订单号列表查询
+     * @param orderNoList
+     * @return
+     */
+    Map<Long, List<Object>> queryByOrderNoList(List<Long> orderNoList);
 
 
 

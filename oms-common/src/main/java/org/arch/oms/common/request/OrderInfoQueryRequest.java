@@ -1,5 +1,7 @@
 package org.arch.oms.common.request;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -9,6 +11,7 @@ import java.util.List;
  * @version V1.0
  * 2021-06-30
  */
+@Data
 public class OrderInfoQueryRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -36,6 +39,11 @@ public class OrderInfoQueryRequest implements Serializable {
      * 订单集合
      */
     private List<Long> orderIdList;
+
+    /**
+     * 分页参数
+     */
+    private PageInfo pageInfo;
 
     /**
      * 查询订单内容

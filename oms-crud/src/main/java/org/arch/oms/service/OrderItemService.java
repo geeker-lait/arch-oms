@@ -1,7 +1,9 @@
 package org.arch.oms.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.arch.framework.crud.CrudService;
@@ -14,7 +16,10 @@ import org.arch.oms.service.bizinterface.OrderDetailQueryInterface;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author lait
@@ -36,6 +41,22 @@ public class OrderItemService extends CrudService<OrderItem, Long> implements Or
         LambdaQueryWrapper<OrderItem> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(OrderItem::getOrderNo, orderNo);
         return (List)orderItemDao.list(queryWrapper);
+    }
+
+    @Override
+    public Map<Long, List<Object>> queryByOrderNoList(List<Long> orderNoList) {
+        LambdaQueryWrapper<OrderItem> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.in(OrderItem::getOrderNo, orderNoList);
+        List<OrderItem> list = orderItemDao.list(queryWrapper);
+        if (ObjectUtils.isEmpty(list)) {
+            new HashMap<>();
+        }
+        Map<Long, List<Object>> resultMap = Maps.newHashMap();
+        list.stream().collect(Collectors.groupingBy(orderItem -> orderItem.getOrderNo(), Collectors.toList()))
+                .entrySet().forEach(entrySet -> {
+                    resultMap.put(entrySet.getKey(), (List)entrySet.getValue());
+                });
+        return resultMap;
     }
 
     @Override
