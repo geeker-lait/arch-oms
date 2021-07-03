@@ -3,7 +3,7 @@ package org.arch.oms.common.request;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author junboXiang
@@ -18,12 +18,12 @@ public class OrderSaveRequest implements Serializable {
     /**
      * 产品编号集合
      */
-    private List<Long> productNoList;
+    private Set<Long> productNoList;
 
     /**
      * 购物车id集合
      */
-    private List<Long> orderCartList;
+    private Set<Long> orderCartList;
 
     /**
      * 收货地址 id

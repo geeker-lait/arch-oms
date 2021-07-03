@@ -1,18 +1,20 @@
-package org.arch.oms.common.request;
+package org.arch.oms.common.dto;
 
 import lombok.Data;
+import org.arch.oms.common.request.OrderSectionRequest;
+import org.arch.oms.common.request.PageInfo;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * 订单查询request
+ * 订单查询request 管理端
  * @author junboXiang
  * @version V1.0
  * 2021-06-30
  */
 @Data
-public class OrderInfoQueryRequest implements Serializable {
+public class OrderInfoSearchDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -38,7 +40,7 @@ public class OrderInfoQueryRequest implements Serializable {
     /**
      * 订单集合
      */
-    private List<Long> orderIdList;
+    private List<Long> orderNoList;
 
     /**
      * 分页参数

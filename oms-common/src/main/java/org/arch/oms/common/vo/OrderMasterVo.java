@@ -51,11 +51,6 @@ public class OrderMasterVo implements Serializable {
     private Long storeNo;
 
     /**
-     * 订单号
-     */
-    private Long orderNo;
-
-    /**
      * 单表：销售订单；秒杀订单，采购订单，用表名来表示
      */
     private String orderTable;
@@ -63,7 +58,7 @@ public class OrderMasterVo implements Serializable {
     /**
      * 订单来源：0->PC订单；1->app订单
      */
-    private Integer orderSrource;
+    private Integer orderSource;
 
     /**
      * 订单金额
@@ -94,6 +89,11 @@ public class OrderMasterVo implements Serializable {
      * 确认收货时间
      */
     private Date receiveTime;
+
+    /**
+     * 评论时间
+     */
+    private Date commentTime;
 
     /**
      * 应付金额（实际支付金额）

@@ -11,6 +11,7 @@ import org.arch.framework.id.IdService;
 import org.arch.oms.common.ExceptionStatusCode;
 import org.arch.oms.common.enums.OrderInvoiceTyp;
 import org.arch.oms.common.enums.OrderItemTable;
+import org.arch.oms.common.enums.OrderState;
 import org.arch.oms.common.request.OrderSaveRequest;
 import org.arch.oms.dto.OrderSaveDto;
 import org.arch.oms.entity.OrderCart;
@@ -21,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,23 +52,23 @@ public class OrderCreateManager {
          * 2.生成订单相关数据
          */
         if (CollectionUtils.isEmpty(request.getOrderCartList()) && CollectionUtils.isEmpty(request.getProductNoList())) {
-            throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("没有商品或购物车数据"));
+            throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("提交订单没有任何商品数据"));
         }
         // 存放商品信息集合
-        ArrayList<Object> productList = Lists.newArrayList();
+        List<Object> productList = Lists.newArrayList();
         if (CollectionUtils.isNotEmpty(request.getOrderCartList())) {
             LambdaQueryWrapper<OrderCart> cartWrapper = Wrappers.lambdaQuery();
             cartWrapper.in(OrderCart::getId, request.getOrderCartList()).eq(OrderCart::getBuyerAccountId, userId);
             List<OrderCart> carts = orderCartService.findAllBySpec(cartWrapper);
             // 判断购物车商品是否属于同一个商家
             if (CollectionUtils.isNotEmpty(carts) && carts.stream().map(OrderCart::getStoreNo).collect(Collectors.toSet()).size() > 0) {
-                throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("不通商家产品不能同事提交"));
+                throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("不同商家产品不能同时提交"));
             }
             // todo 根据购物车查询商品信息 并判断是否过期， 没有过期加入到list中 并将购物车id添加到 返回值中
         }
         // 查询商品并加入到list中
         if (CollectionUtils.isEmpty(request.getProductNoList())) {
-
+            // todo 查询 传入的商品编号列表
         }
         if (CollectionUtils.isEmpty(productList)) {
             throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("没有需要提交的商品"));
@@ -86,7 +87,7 @@ public class OrderCreateManager {
         // 生成 履约信息
         buildFulFilInfo(orderSaveDto);
         // 支付表信息
-        buildPayInfo(orderSaveDto);
+        buildPaymentInfo(orderSaveDto);
         return orderSaveDto;
     }
 
@@ -101,6 +102,8 @@ public class OrderCreateManager {
         OrderMaster orderMaster = new OrderMaster();
         orderMaster.setId(Long.valueOf(idService.generateId(IdKey.OMS_ORDER_ID)))
                 .setAppId(appId).setBuyerAccountId(userId).setBuyerAccountName(userName)
+                // 默认创建订单待支付状态
+                .setOrderState(OrderState.WAITING_PAYMENT.getValue()).setOrderTime(new Date())
         ;
         // todo 缺少商品卖家信息
         dto.setOrderMaster(orderMaster);
@@ -114,6 +117,7 @@ public class OrderCreateManager {
      * @param products
      */
     private void buildOrderItemInfo(OrderSaveDto dto, List<Object> products) {
+
         // todo
 
     }
@@ -133,16 +137,18 @@ public class OrderCreateManager {
      * @param request
      */
     private void buildOrderInvoiceInfo(OrderSaveDto dto, OrderSaveRequest request) {
+        OrderMaster orderMaster = dto.getOrderMaster();
         if (request.getInvoiceInfo() == null || OrderInvoiceTyp.getEnum(request.getInvoiceInfo().getInvoiceTyp()) == null) {
+            log.info("订单没有填写发票类型不生成发票记录 orderId:{}", orderMaster.getId());
             return;
         }
         OrderSaveRequest.InvoiceInfo invoiceInfo = request.getInvoiceInfo();
-        OrderMaster orderMaster = dto.getOrderMaster();
+
         OrderInvoice orderInvoice = new OrderInvoice();
         orderInvoice.setAmount(orderMaster.getOrderAmount())
                 .setAppId(orderMaster.getAppId())
                 .setStoreNo(orderMaster.getStoreNo())
-                .setOrderNo(orderMaster.getOrderNo())
+                .setOrderNo(orderMaster.getId())
                 .setInvoiceTyp(invoiceInfo.getInvoiceTyp())
                 .setInvoiceNo(invoiceInfo.getInvoiceTitle())
                 .setInvoiceTitle(invoiceInfo.getInvoiceTitle())
@@ -157,7 +163,9 @@ public class OrderCreateManager {
      * @param request
      */
     private void buildAddressInfo(OrderSaveDto dto, OrderSaveRequest request) {
+        OrderMaster orderMaster = dto.getOrderMaster();
         if (request.getAddressId() == null) {
+            log.info("订单没有选择地址不生成订单配送地址数据 orderId:{}", orderMaster.getId());
             return;
         }
         // todo 根据查询的用户地址id
@@ -168,13 +176,15 @@ public class OrderCreateManager {
      * 构建履约信息
      */
     private void buildFulFilInfo(OrderSaveDto dto) {
+        // todo 生成履约单 id 是在哪个地方
+
 
     }
 
     /**
      * 构建支付信息
      */
-    private void buildPayInfo(OrderSaveDto dto) {
+    private void buildPaymentInfo(OrderSaveDto dto) {
 
     }
 

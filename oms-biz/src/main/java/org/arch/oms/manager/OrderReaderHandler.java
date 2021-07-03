@@ -1,9 +1,10 @@
 package org.arch.oms.manager;
 
-import org.arch.oms.common.request.OrderInfoQueryRequest;
+import org.arch.oms.common.dto.OrderInfoSearchDto;
 import org.arch.oms.common.request.OrderSectionRequest;
 import org.arch.oms.common.vo.OrderInfoVo;
 import org.arch.oms.common.vo.OrderMasterVo;
+import org.arch.oms.common.vo.PageVo;
 import org.arch.oms.entity.OrderMaster;
 import org.arch.oms.utils.BeanCopyUtil;
 
@@ -22,27 +23,27 @@ public abstract class OrderReaderHandler {
     public static final Map<String, OrderReaderHandler> ORDER_READER_HANDLER_MAP = new ConcurrentHashMap<>();
 
     /**
-     * 查询单个订单详情
+     * 根据指定订单号列表查询
      * @param userId
-     * @param orderId
+     * @param orderIds
      * @param orderSectionRequest
      * @return
      */
-    public abstract OrderInfoVo queryOrder(Long userId, Long orderId, OrderSectionRequest orderSectionRequest);
+    public abstract List<OrderInfoVo> queryListOrder(Long userId, List<Long> orderIds, OrderSectionRequest orderSectionRequest);
 
     /**
-     * 用户查询订单
+     * 用户查询订单 by page
      * @param request
      * @return
      */
-    public abstract List<OrderInfoVo> queryOrderList(OrderInfoQueryRequest request);
+    public abstract PageVo<List<OrderInfoVo>> queryOrderPageList(OrderInfoSearchDto request);
 
     /**
-     * 管理端查询订单
+     * 管理端查询订单 by page
      * @param request
      * @return
      */
-    public abstract List<OrderInfoVo> queryOrderByManager(OrderInfoQueryRequest request);
+    public abstract PageVo<List<OrderInfoVo>> queryOrderPageListByManager(OrderInfoSearchDto request);
 
     /**
      * 是否查询 进行订单其他信息的处理

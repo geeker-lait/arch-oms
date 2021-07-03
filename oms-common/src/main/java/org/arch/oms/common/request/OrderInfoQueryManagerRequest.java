@@ -12,7 +12,7 @@ import java.util.List;
  * 2021-06-30
  */
 @Data
-public class OrderInfoQueryRequest implements Serializable {
+public class OrderInfoQueryManagerRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**

@@ -11,15 +11,15 @@
         <result column="buyer_account_id" property="buyerAccountId" />
         <result column="buyer_account_name" property="buyerAccountName" />
         <result column="store_no" property="storeNo" />
-        <result column="order_no" property="orderNo" />
         <result column="order_table" property="orderTable" />
-        <result column="order_srource" property="orderSrource" />
+        <result column="order_source" property="orderSource" />
         <result column="order_amount" property="orderAmount" />
         <result column="order_state" property="orderState" />
         <result column="order_time" property="orderTime" />
         <result column="pay_time" property="payTime" />
         <result column="delivery_time" property="deliveryTime" />
         <result column="receive_time" property="receiveTime" />
+        <result column="comment_time" property="commentTime" />
         <result column="pay_amount" property="payAmount" />
         <result column="pay_typ" property="payTyp" />
         <result column="dt" property="dt" />
@@ -27,7 +27,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_id, seller_account_id, seller_account_name, buyer_account_id, buyer_account_name, store_no, order_no, order_table, order_srource, order_amount, order_state, order_time, pay_time, delivery_time, receive_time, pay_amount, pay_typ, dt
+        id, app_id, seller_account_id, seller_account_name, buyer_account_id, buyer_account_name, store_no, order_table, order_srource, order_amount, order_state, order_time, pay_time, delivery_time, receive_time, comment_time, pay_amount, pay_typ, dt
     </sql>
 
 </mapper>

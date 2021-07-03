@@ -1,6 +1,8 @@
 package org.arch.oms.service;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -32,6 +34,11 @@ public class OrderMasterService extends CrudService<OrderMaster, Long> implement
     private final OrderMasterDao orderMasterDao;
     private final OrderCartDao orderCartDao;
 
+    /**
+     * 保存订单 及 订单附属信息
+     * @param dto
+     * @return
+     */
     @Transactional(rollbackFor = Exception.class)
     public Boolean saveOrderInfo(OrderSaveDto dto) {
         try {
@@ -74,6 +81,15 @@ public class OrderMasterService extends CrudService<OrderMaster, Long> implement
         }
     }
 
+    /**
+     * 分页查询订单
+     * @param queryWrapper
+     * @param page
+     * @return
+     */
+    public IPage<OrderMaster> pageByQueryWrapper(Wrapper<OrderMaster> queryWrapper, IPage<OrderMaster> page) {
+        return orderMasterDao.page(page, queryWrapper);
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
