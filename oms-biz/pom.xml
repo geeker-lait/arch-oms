@@ -40,6 +40,11 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
+        <!-- 使用新的 framework 包 找不到 spring-security-config中的类，固单独引入  -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
