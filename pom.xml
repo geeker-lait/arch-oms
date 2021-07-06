@@ -11,7 +11,6 @@
         <module>oms-crud</module>
         <module>oms-api</module>
         <module>oms-rest</module>
-        <module>pms-biz</module>
         <module>oms-common</module>
     </modules>
 
@@ -79,6 +78,11 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>3.4.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson</artifactId>
+                <version>3.16.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
