@@ -12,7 +12,7 @@ mybatis-plus:
   typeAliasesPackage: demo.crud.entity
   global-config:
     db-config:
-      id-type: ASSIGN_ID
+      id-type: AUTO
       insert-strategy: not_empty
       update-strategy: not_empty
       select-strategy: not_empty
