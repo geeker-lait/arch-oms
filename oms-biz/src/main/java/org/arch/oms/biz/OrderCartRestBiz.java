@@ -7,16 +7,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.arch.framework.beans.exception.BusinessException;
 import org.arch.oms.common.ExceptionStatusCode;
+import org.arch.oms.common.request.OrderCartSaveRequest;
+import org.arch.oms.common.vo.OrderCartVo;
 import org.arch.oms.entity.OrderCart;
 import org.arch.oms.manager.UserHelper;
 import org.arch.oms.rest.OrderCartRest;
-import org.arch.oms.common.request.OrderCartSaveRequest;
-import org.arch.oms.common.vo.OrderCartVo;
 import org.arch.oms.service.OrderCartService;
 import org.arch.oms.utils.BeanCopyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.MessageFormat;
 import java.util.Comparator;
@@ -30,7 +31,8 @@ import java.util.stream.Collectors;
  * 2021-06-24
  */
 @Slf4j
-@Service
+@RestController
+@RequestMapping("/oms/cart")
 public class OrderCartRestBiz implements OrderCartRest {
 
     @Autowired
@@ -39,7 +41,7 @@ public class OrderCartRestBiz implements OrderCartRest {
     private UserHelper userHelper;
 
     @Override
-    public Boolean save(List<OrderCartSaveRequest> requests) {
+    public Boolean save(@RequestBody List<OrderCartSaveRequest> requests) {
         Long userId = userHelper.getUserId();
         Long appId = userHelper.getAppId();
         if (CollectionUtils.isEmpty(requests)) {

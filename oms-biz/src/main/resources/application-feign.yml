@@ -1,6 +1,6 @@
 feign:
   httpclient:
-    connection-timeout: 5000
+    connection-timeout: 1000
     enabled: true
 
 ---
@@ -11,5 +11,5 @@ spring:
 
 feign:
   httpclient:
-    connection-timeout: 200000
+    connection-timeout: 1000
     enabled: true

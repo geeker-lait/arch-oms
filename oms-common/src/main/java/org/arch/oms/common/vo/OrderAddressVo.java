@@ -1,5 +1,7 @@
 package org.arch.oms.common.vo;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,6 +10,7 @@ import java.util.Date;
  * @version V1.0
  * 2021-06-26
  */
+@Data
 public class OrderAddressVo implements Serializable {
     private static final long serialVersionUID = 1L;
 

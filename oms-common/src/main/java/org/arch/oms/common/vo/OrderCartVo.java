@@ -1,5 +1,7 @@
 package org.arch.oms.common.vo;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -9,6 +11,7 @@ import java.util.Date;
  * @version V1.0
  * 2021-06-26
  */
+@Data
 public class OrderCartVo implements Serializable {
     private static final long serialVersionUID = 1L;
 

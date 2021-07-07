@@ -4,7 +4,7 @@ server:
     context-path: /oms
 spring:
   application:
-    name: arch-oms
+    name: arch-oms-api
   freemarker:
     check-template-location: false
     settings:

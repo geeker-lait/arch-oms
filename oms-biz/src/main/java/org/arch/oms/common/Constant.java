@@ -29,4 +29,9 @@ public class Constant {
      * BigDecimal 100
      */
     public static final BigDecimal HUNDRED_DECIMAL = new BigDecimal("100.00").setScale(Constant.DEFAULT_SCALE, BigDecimal.ROUND_HALF_UP);
+
+    /**
+     * 订单创建前缀
+     */
+    public static final String CREATE_ORDER_REDIS_LOCK_PREFIX = "oms:order:create:";
 }

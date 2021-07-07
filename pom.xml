@@ -12,6 +12,7 @@
         <module>oms-api</module>
         <module>oms-rest</module>
         <module>oms-common</module>
+        <module>oms-feign</module>
     </modules>
 
     <properties>

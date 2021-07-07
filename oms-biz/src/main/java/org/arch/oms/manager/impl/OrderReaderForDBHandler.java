@@ -101,7 +101,10 @@ public class OrderReaderForDBHandler extends OrderReaderHandler implements Initi
     public PageVo<List<OrderInfoVo>> queryOrderPageListByManager(OrderInfoSearchDto request) {
         PageInfo pageInfo = request.getPageInfo() == null ? new PageInfo().checkPageInfo() : request.getPageInfo().checkPageInfo();
         LambdaQueryWrapper<OrderMaster> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(OrderMaster::getStoreNo, request.getStoreNo()).eq(OrderMaster::getAppId, request.getAppId());
+        queryWrapper.eq(OrderMaster::getStoreNo, request.getStoreNo());
+        if (request.getAppId() != null) {
+            queryWrapper.eq(OrderMaster::getAppId, request.getAppId());
+        }
         if (request.getUserId() != null) {
             queryWrapper.eq(OrderMaster::getBuyerAccountId, request.getUserId());
         }
