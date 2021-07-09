@@ -20,7 +20,7 @@ public class OrderDetailVo implements Serializable {
     /**
      * 主键ID
      */
-    private Long id;
+    private String orderItemNo;
 
     /**
      * 应用ID
@@ -30,7 +30,7 @@ public class OrderDetailVo implements Serializable {
     /**
      * 店铺编号
      */
-    private Long storeNo;
+    private String storeNo;
 
     /**
      * 订单编号
@@ -40,7 +40,7 @@ public class OrderDetailVo implements Serializable {
     /**
      * 产品编号
      */
-    private Long productNo;
+    private String productNo;
 
     /**
      * 产品图片

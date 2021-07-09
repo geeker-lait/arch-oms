@@ -1,6 +1,6 @@
 package org.arch.oms.manager;
 
-import org.arch.framework.utils.SecurityUtils;
+import org.arch.framework.beans.TokenInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,12 +18,17 @@ public class UserHelper {
     @Autowired
     private HttpServletRequest httpServletRequest;
 
+    public TokenInfo getTokenInfo() {
+        return null;
+    }
+
     /**
      * 获取当前登录用户id
      * @return
      */
     public Long getUserId() {
-        return SecurityUtils.getCurrentUserId();
+//        return SecurityUtils.getCurrentUserId();
+        return null;
     }
 
     /**
@@ -31,7 +36,8 @@ public class UserHelper {
      * @return
      */
     public String getUserName() {
-        return SecurityUtils.getAccountName();
+//        return SecurityUtils.getAccountName();
+        return null;
     }
 
     /**

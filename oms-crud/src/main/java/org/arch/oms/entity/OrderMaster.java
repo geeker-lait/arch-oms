@@ -60,7 +60,7 @@ public class OrderMaster extends CrudEntity<OrderMaster> {
     /**
      * 店铺编号
      */
-    private Long storeNo;
+    private String storeNo;
 
 
     /**

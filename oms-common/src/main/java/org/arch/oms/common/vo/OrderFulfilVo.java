@@ -31,7 +31,7 @@ public class OrderFulfilVo {
     /**
      * 店铺编号
      */
-    private Long storeNo;
+    private String storeNo;
 
     /**
      * 订单编号

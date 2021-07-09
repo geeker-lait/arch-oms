@@ -59,7 +59,7 @@ public class OrderCart extends CrudEntity<OrderCart> {
     /**
      * 店铺编号
      */
-    private Long storeNo;
+    private String storeNo;
 
     /**
      * 商品分类
@@ -74,7 +74,7 @@ public class OrderCart extends CrudEntity<OrderCart> {
     /**
      * 产品ID
      */
-    private Long productId;
+    private String productNo;
 
     /**
      * 商品名称

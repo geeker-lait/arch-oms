@@ -31,7 +31,7 @@ public class OrderInvoiceVo {
     /**
      * 店编
      */
-    private Long storeNo;
+    private String storeNo;
 
     /**
      * 订单号

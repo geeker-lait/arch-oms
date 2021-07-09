@@ -16,7 +16,11 @@
     <dependencies>
         <dependency>
             <groupId>org.arch.projects</groupId>
-            <artifactId>framework-core</artifactId>
+            <artifactId>framework-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.arch.projects</groupId>
+            <artifactId>framework-crud</artifactId>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -25,10 +29,6 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.arch.projects</groupId>

@@ -1,7 +1,7 @@
 server:
   port: 9090
   servlet:
-    context-path: /oms
+    context-path: /
 spring:
   application:
     name: arch-oms-api

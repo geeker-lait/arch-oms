@@ -70,8 +70,8 @@ public class OrderMasterService extends CrudService<OrderMaster, Long> implement
             }
             if (CollectionUtils.isNotEmpty(dto.getOrderItem())) {
                 ContainerConstants.ORDER_ITEM_SERVICES.get(dto.getOrderDetailTable()).saveList(dto.getOrderItem());
-            }
-            if (CollectionUtils.isNotEmpty(dto.getRemoveCart())) {
+            }            if (CollectionUtils.isNotEmpty(dto.getRemoveCart())) {
+
                 orderCartDao.removeByIds(dto.getRemoveCart());
             }
             return Boolean.TRUE;

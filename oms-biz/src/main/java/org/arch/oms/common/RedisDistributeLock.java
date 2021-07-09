@@ -1,7 +1,7 @@
 package org.arch.oms.common;
 
 import lombok.extern.slf4j.Slf4j;
-import org.arch.oms.dto.LockExecuteResult;
+import org.arch.oms.common.dto.LockExecuteResult;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;

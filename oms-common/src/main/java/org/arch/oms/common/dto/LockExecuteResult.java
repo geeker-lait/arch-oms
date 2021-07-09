@@ -1,4 +1,4 @@
-package org.arch.oms.dto;
+package org.arch.oms.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -29,8 +29,8 @@ public class OrderItem extends CrudEntity<OrderItem> {
     /**
      * 主键ID
      */
-    @TableId(value = "id", type = IdType.INPUT)
-    private Long id;
+    @TableId(value = "order_item_no", type = IdType.INPUT)
+    private String orderItemNo;
 
     /**
      * 应用ID
@@ -40,7 +40,7 @@ public class OrderItem extends CrudEntity<OrderItem> {
     /**
      * 店铺编号
      */
-    private Long storeNo;
+    private String storeNo;
 
     /**
      * 订单编号
@@ -50,7 +50,7 @@ public class OrderItem extends CrudEntity<OrderItem> {
     /**
      * 产品编号
      */
-    private Long productNo;
+    private String productNo;
 
     /**
      * 产品图片
@@ -105,7 +105,7 @@ public class OrderItem extends CrudEntity<OrderItem> {
 
     @Override
     protected Serializable pkVal() {
-        return this.id;
+        return this.orderItemNo;
     }
 
 }

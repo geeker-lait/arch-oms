@@ -48,7 +48,7 @@ public class OrderMasterVo implements Serializable {
     /**
      * 店铺编号
      */
-    private Long storeNo;
+    private String storeNo;
 
     /**
      * 单表：销售订单；秒杀订单，采购订单，用表名来表示

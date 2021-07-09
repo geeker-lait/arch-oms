@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public enum OrderAddressUserTyp implements ValueDescription<Integer> {
     SHIPPER(1, "发货人"),
-    consignee(2, "收货人")
+    CONSIGNEE(2, "收货人")
     ;
 
 

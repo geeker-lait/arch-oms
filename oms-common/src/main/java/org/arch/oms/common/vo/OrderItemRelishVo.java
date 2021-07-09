@@ -31,7 +31,7 @@ public class OrderItemRelishVo {
     /**
      * 店编
      */
-    private Long storeNo;
+    private String storeNo;
 
     /**
      * 订单号
@@ -41,7 +41,7 @@ public class OrderItemRelishVo {
     /**
      * 订单项ID
      */
-    private Long orderItemId;
+    private String orderItemNo;
 
     /**
      * 可以获得的积分

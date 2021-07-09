@@ -13,7 +13,7 @@
         <result column="store_no" property="storeNo" />
         <result column="product_category_id" property="productCategoryId" />
         <result column="product_brand" property="productBrand" />
-        <result column="product_id" property="productId" />
+        <result column="product_no" property="productNo" />
         <result column="product_name" property="productName" />
         <result column="product_sub_title" property="productSubTitle" />
         <result column="product_attrs" property="productAttrs" />
@@ -28,7 +28,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_id, seller_account_id, seller_account_name, buyer_account_id, buyer_account_name, store_no, product_category_id, product_brand, product_id, product_name, product_sub_title, product_attrs, product_pic, product_sku_no, product_sku_code, quantity, price, state, dt
+        id, app_id, seller_account_id, seller_account_name, buyer_account_id, buyer_account_name, store_no, product_category_id, product_brand, product_no, product_name, product_sub_title, product_attrs, product_pic, product_sku_no, product_sku_code, quantity, price, state, dt
     </sql>
 
 </mapper>

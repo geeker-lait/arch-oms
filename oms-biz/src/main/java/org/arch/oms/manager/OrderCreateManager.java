@@ -6,18 +6,25 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.arch.framework.api.IdKey;
+import org.arch.framework.beans.TokenInfo;
 import org.arch.framework.beans.exception.BusinessException;
 import org.arch.framework.id.IdService;
 import org.arch.oms.common.ExceptionStatusCode;
+import org.arch.oms.common.enums.OrderAddressUserTyp;
 import org.arch.oms.common.enums.OrderInvoiceTyp;
 import org.arch.oms.common.enums.OrderItemTable;
 import org.arch.oms.common.enums.OrderState;
 import org.arch.oms.common.request.OrderSaveRequest;
 import org.arch.oms.dto.OrderSaveDto;
+import org.arch.oms.entity.OrderAddress;
 import org.arch.oms.entity.OrderCart;
+import org.arch.oms.entity.OrderFulfil;
 import org.arch.oms.entity.OrderInvoice;
 import org.arch.oms.entity.OrderMaster;
+import org.arch.oms.entity.OrderPayment;
+import org.arch.oms.manager.ums.UserAddressManager;
 import org.arch.oms.service.OrderCartService;
+import org.arch.ums.user.res.UserAddressResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,26 +46,28 @@ public class OrderCreateManager {
     private IdService idService;
     @Autowired
     private OrderCartService orderCartService;
+    @Autowired
+    private UserAddressManager userAddressManager;
 
     /**
      * 通过创建用户请求转换成 oder
      *  fixme 暂时没有库存、折扣逻辑
      * @param request
      */
-    public OrderSaveDto buildOrderInfo(OrderSaveRequest request, Long userId, String userName, Long appId) {
+    public OrderSaveDto buildOrderInfo(OrderSaveRequest request, TokenInfo tokenInfo, Long appId) {
         /**
          * 1.根据商品或者购物车查询出商品
          *
          * 2.生成订单相关数据
          */
-        if (CollectionUtils.isEmpty(request.getOrderCartList()) && CollectionUtils.isEmpty(request.getProductNoList())) {
+        if (CollectionUtils.isEmpty(request.getOrderCartList()) && CollectionUtils.isEmpty(request.getProductSkuNoList())) {
             throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("提交订单没有任何商品数据"));
         }
         // 存放商品信息集合
         List<Object> productList = Lists.newArrayList();
         if (CollectionUtils.isNotEmpty(request.getOrderCartList())) {
             LambdaQueryWrapper<OrderCart> cartWrapper = Wrappers.lambdaQuery();
-            cartWrapper.in(OrderCart::getId, request.getOrderCartList()).eq(OrderCart::getBuyerAccountId, userId);
+            cartWrapper.in(OrderCart::getId, request.getOrderCartList()).eq(OrderCart::getBuyerAccountId, tokenInfo.getAccountId());
             List<OrderCart> carts = orderCartService.findAllBySpec(cartWrapper);
             // 判断购物车商品是否属于同一个商家
             if (CollectionUtils.isNotEmpty(carts) && carts.stream().map(OrderCart::getStoreNo).collect(Collectors.toSet()).size() > 0) {
@@ -67,7 +76,8 @@ public class OrderCreateManager {
             // todo 根据购物车查询商品信息 并判断是否过期， 没有过期加入到list中 并将购物车id添加到 返回值中
         }
         // 查询商品并加入到list中
-        if (CollectionUtils.isEmpty(request.getProductNoList())) {
+        if (CollectionUtils.isEmpty(request.getProductSkuNoList())) {
+
             // todo 查询 传入的商品编号列表
         }
         if (CollectionUtils.isEmpty(productList)) {
@@ -75,7 +85,7 @@ public class OrderCreateManager {
         }
         OrderSaveDto orderSaveDto = new OrderSaveDto();
         // 生成订单主表数据
-        buildOrderMasterInfo(userId, userName, appId, orderSaveDto);
+        buildOrderMasterInfo(tokenInfo, appId, orderSaveDto);
         // 生成订单商品行数据
         buildOrderItemInfo(orderSaveDto, productList);
         // 计算折扣
@@ -87,21 +97,20 @@ public class OrderCreateManager {
         // 生成 履约信息
         buildFulFilInfo(orderSaveDto);
         // 支付表信息
-        buildPaymentInfo(orderSaveDto);
+        buildPaymentInfo(orderSaveDto, tokenInfo);
         return orderSaveDto;
     }
 
     /**
      * 构建商品主表信息
-     * @param userId
-     * @param userName
+     * @param tokenInfo
      * @param dto
      * @param appId
      */
-    private void buildOrderMasterInfo(Long userId, String userName, Long appId, OrderSaveDto dto) {
+    private void buildOrderMasterInfo(TokenInfo tokenInfo, Long appId, OrderSaveDto dto) {
         OrderMaster orderMaster = new OrderMaster();
         orderMaster.setId(Long.valueOf(idService.generateId(IdKey.OMS_ORDER_ID)))
-                .setAppId(appId).setBuyerAccountId(userId).setBuyerAccountName(userName)
+                .setAppId(appId).setBuyerAccountId(tokenInfo.getAccountId()).setBuyerAccountName(tokenInfo.getAccountName())
                 // 默认创建订单待支付状态
                 .setOrderState(OrderState.WAITING_PAYMENT.getValue()).setOrderTime(new Date())
         ;
@@ -168,24 +177,59 @@ public class OrderCreateManager {
             log.info("订单没有选择地址不生成订单配送地址数据 orderId:{}", orderMaster.getId());
             return;
         }
-        // todo 根据查询的用户地址id
-
+        UserAddressResponse userAddress = userAddressManager.getUserAddressById(request.getAddressId(), orderMaster.getBuyerAccountId());
+        if (userAddress == null) {
+            throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("用户地址不存在"));
+        }
+        OrderAddress orderAddress = new OrderAddress();
+        orderAddress.setAppId(orderMaster.getAppId());
+        orderAddress.setStoreNo(orderMaster.getStoreNo());
+        orderAddress.setOrderNo(orderMaster.getId());
+        orderAddress.setUserPhone(userAddress.getMobile());
+        orderAddress.setUserName(userAddress.getName());
+        orderAddress.setCountry(userAddress.getCountry());
+        orderAddress.setZipcode(userAddress.getZipCode());
+        orderAddress.setUserTyp(OrderAddressUserTyp.CONSIGNEE.getValue());
+        orderAddress.setProvinceName(userAddress.getProvinceName());
+        orderAddress.setProvinceNo(userAddress.getProvinceNo());
+        orderAddress.setProvinceShortName(userAddress.getProvinceShortName());
+        orderAddress.setCityName(userAddress.getCityName());
+        orderAddress.setCityNo(userAddress.getCityNo());
+        orderAddress.setCityShortName(userAddress.getCityShortName());
+        orderAddress.setDistrictName(userAddress.getDistrictName());
+        orderAddress.setDistrictNo(userAddress.getDistrictNo());
+        orderAddress.setStreetName(userAddress.getStreetName());
+        orderAddress.setStreetNo(userAddress.getStreetNo());
+        orderAddress.setAddress(userAddress.getAddress());
+        dto.setOrderAddress(orderAddress);
     }
 
     /**
      * 构建履约信息
      */
     private void buildFulFilInfo(OrderSaveDto dto) {
+        OrderMaster orderMaster = dto.getOrderMaster();
         // todo 生成履约单 id 是在哪个地方
-
+        OrderFulfil orderFulfil = new OrderFulfil();
+        orderFulfil.setAppId(orderMaster.getAppId());
+        orderFulfil.setOrderNo(orderMaster.getId());
+        orderFulfil.setStoreNo(orderMaster.getStoreNo());
+//        orderFulfil.setFulfilNo(idService.generateId())
+        dto.setOrderFulfil(orderFulfil);
 
     }
 
     /**
      * 构建支付信息
      */
-    private void buildPaymentInfo(OrderSaveDto dto) {
-
+    private void buildPaymentInfo(OrderSaveDto dto, TokenInfo tokenInfo) {
+        OrderMaster orderMaster = dto.getOrderMaster();
+        OrderPayment orderPayment = new OrderPayment();
+        orderPayment.setAccountId(orderMaster.getBuyerAccountId());
+        orderPayment.setAccountName(orderMaster.getBuyerAccountName());
+        orderPayment.setAmount(orderMaster.getPayAmount());
+        // todo 用户手机号
+//        orderPayment.setPhoneNo(tokenInfo.get)
     }
 
 

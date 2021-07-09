@@ -62,7 +62,42 @@
             <!-- other -->
             <dependency>
                 <groupId>org.arch.projects</groupId>
+                <artifactId>user-feign-admin</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.arch.projects</groupId>
+                <artifactId>pms-feign</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <artifactId>pms-api</artifactId>
+                <groupId>org.arch.projects</groupId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.arch.projects</groupId>
                 <artifactId>framework-api</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.arch.projects</groupId>
+                <artifactId>framework-crud</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.arch.projects</groupId>
+                <artifactId>user-api</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.arch.projects</groupId>
+                <artifactId>framework-id</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.arch.projects</groupId>
+                <artifactId>framework-beans</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -84,6 +119,11 @@
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson</artifactId>
                 <version>3.16.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.beanmapper</groupId>
+                <artifactId>beanmapper</artifactId>
+                <version>3.1.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

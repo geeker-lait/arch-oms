@@ -10,6 +10,7 @@ import org.arch.oms.common.ExceptionStatusCode;
 import org.arch.oms.common.request.OrderCartSaveRequest;
 import org.arch.oms.common.vo.OrderCartVo;
 import org.arch.oms.entity.OrderCart;
+import org.arch.oms.manager.OrderCartManager;
 import org.arch.oms.manager.UserHelper;
 import org.arch.oms.rest.OrderCartRest;
 import org.arch.oms.service.OrderCartService;
@@ -39,6 +40,8 @@ public class OrderCartRestBiz implements OrderCartRest {
     private OrderCartService orderCartService;
     @Autowired
     private UserHelper userHelper;
+    @Autowired
+    private OrderCartManager orderCartManager;
 
     @Override
     public Boolean save(@RequestBody List<OrderCartSaveRequest> requests) {
@@ -52,9 +55,8 @@ public class OrderCartRestBiz implements OrderCartRest {
         if (requests.size() > cartNumMax) {
             throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode(MessageFormat.format("购物车最大数量是{0}", cartNumMax)));
         }
-        // todo 根据商品id feign 查询商品信息转换成购物车信息
-        orderCartService.saveCarts(null, null);
-        return null;
+        List<OrderCart> orderCarts = orderCartManager.buildAndCheckOrderCart(requests, userHelper.getTokenInfo(), appId);
+        return orderCartService.saveCarts(orderCarts, userId);
     }
 
     @Override
@@ -72,14 +74,14 @@ public class OrderCartRestBiz implements OrderCartRest {
         LambdaQueryWrapper<OrderCart> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(OrderCart::getAppId, appId).eq(OrderCart::getBuyerAccountId, userId);
         List<OrderCart> orderCarts = orderCartService.findAllBySpec(queryWrapper);
-        // todo 调用获取商品规格信息是否变更，变更了批量update 购物车状态 数据
-
+        // 调用获取商品规格信息是否变更，变更了批量update 购物车状态 数据
+        orderCartManager.verifyOrderCartState(orderCarts);
         // fixme 是否分组排序可以根据appId从配置获取
         boolean enableSort = true;
         if (CollectionUtils.isNotEmpty(orderCarts) && enableSort) {
-            // 根据 店铺分组,然后按照加入时间排序   作用：相同门店的商品在一起
-            LinkedHashMap<Long,List<OrderCart>> collect = orderCarts.stream().sorted(Comparator.comparing(OrderCart::getDt).reversed())
-                    .collect(Collectors.groupingBy(OrderCart::getProductId, LinkedHashMap::new,Collectors.toList()));
+            // 根据 店铺分组,然后按照加入时间排序   作用：相同门店的商品在一起 所以按商家编号 分组
+            LinkedHashMap<String,List<OrderCart>> collect = orderCarts.stream().sorted(Comparator.comparing(OrderCart::getDt).reversed())
+                    .collect(Collectors.groupingBy(OrderCart::getStoreNo, LinkedHashMap::new,Collectors.toList()));
             List<OrderCart> finalOrderCarts = Lists.newArrayList();
             collect.entrySet().forEach(keyMap -> {
                 finalOrderCarts.addAll(keyMap.getValue());

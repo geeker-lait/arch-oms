@@ -18,7 +18,7 @@ public class OrderSaveRequest implements Serializable {
     /**
      * 产品编号集合
      */
-    private Set<Long> productNoList;
+    private Set<Long> productSkuNoList;
 
     /**
      * 购物车id集合

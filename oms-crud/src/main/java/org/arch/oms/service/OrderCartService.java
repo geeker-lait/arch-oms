@@ -51,13 +51,13 @@ public class OrderCartService extends CrudService<OrderCart, Long> implements In
     @Transactional(rollbackFor = Exception.class)
     public Boolean saveCarts(List<OrderCart> orderCarts, Long accountId) {
         LambdaQueryWrapper<OrderCart> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(OrderCart::getBuyerAccountId, accountId).in(OrderCart::getProductId, orderCarts.stream().map(OrderCart::getProductId).collect(Collectors.toList()));
-        Map<Long, Long> existProductList = orderCartDao.list(queryWrapper).stream().collect(Collectors.toMap(orderCart -> orderCart.getProductId(), orderCart -> orderCart.getId()));
+        queryWrapper.eq(OrderCart::getBuyerAccountId, accountId).in(OrderCart::getProductSkuNo, orderCarts.stream().map(OrderCart::getProductSkuNo).collect(Collectors.toList()));
+        Map<String, Long> existProductList = orderCartDao.list(queryWrapper).stream().collect(Collectors.toMap(orderCart -> orderCart.getProductSkuNo(), orderCart -> orderCart.getId()));
         List<OrderCart> insertList = Lists.newArrayList();
         List<OrderCart> updateList = Lists.newArrayList();
-        insertList.addAll(orderCarts.stream().filter(orderCart -> !existProductList.containsKey(orderCart.getProductId())).collect(Collectors.toList()));
+        insertList.addAll(orderCarts.stream().filter(orderCart -> !existProductList.containsKey(orderCart.getProductSkuNo())).collect(Collectors.toList()));
         // 根据商品id 查询 全部是空 表示全部是新增
-        updateList.addAll(orderCarts.stream().filter(orderCart -> existProductList.containsKey(orderCart.getProductId()))
+        updateList.addAll(orderCarts.stream().filter(orderCart -> existProductList.containsKey(orderCart.getProductSkuNo()))
                 .map(orderCart -> orderCart.setId(existProductList.get(orderCart.getId()))).collect(Collectors.toList()));
         if (CollectionUtils.isNotEmpty(updateList)) {
             orderCartDao.updateBatchById(updateList);
@@ -84,16 +84,25 @@ public class OrderCartService extends CrudService<OrderCart, Long> implements In
 
     /**
      * 商品变更 更新购物车状态 - 消息通知调用 预留
-     * @param productId
+     * @param productSkuNo
      * @param productAttrs
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updateStateByProductChange(Long productId, String productAttrs) {
+    public Boolean updateStateByProductChange(String productSkuNo, String productAttrs) {
         LambdaQueryWrapper<OrderCart> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(OrderCart::getProductId, productId).ne(OrderCart::getProductAttrs, productAttrs);
+        queryWrapper.eq(OrderCart::getProductSkuNo, productSkuNo).ne(OrderCart::getProductAttrs, productAttrs);
         orderCartDao.update(queryWrapper);
         return Boolean.TRUE;
+    }
+
+    /**
+     * 批量根据Id更新
+     * @param list
+     * @return
+     */
+    public Boolean updateBatchById(List<OrderCart> list) {
+        return orderCartDao.updateBatchById(list, 100);
     }
 
     @Override

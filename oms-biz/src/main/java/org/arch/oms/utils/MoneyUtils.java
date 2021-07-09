@@ -328,4 +328,16 @@ public final class MoneyUtils {
 
         return amount.stripTrailingZeros().toPlainString();
     }
+
+    /**
+     * 是否是小数  null: false   小数: true  整数: false
+     * @param number
+     * @return
+     */
+    public static boolean hasDecimals(BigDecimal number) {
+        if ("".equals(number) && number == null) {
+            return false;
+        }
+        return new BigDecimal(number.intValue()).compareTo(number) == 0 ? false : true;
+    }
 }

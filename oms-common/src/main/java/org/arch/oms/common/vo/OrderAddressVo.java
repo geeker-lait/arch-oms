@@ -27,7 +27,7 @@ public class OrderAddressVo implements Serializable {
     /**
      * 店铺编号
      */
-    private Long storeNo;
+    private String storeNo;
 
     /**
      * 订单编号

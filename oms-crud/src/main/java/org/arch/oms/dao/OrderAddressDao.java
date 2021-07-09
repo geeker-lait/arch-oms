@@ -20,9 +20,4 @@ import org.springframework.stereotype.Repository;
 public class OrderAddressDao extends CrudServiceImpl<OrderAddressMapper, OrderAddress> implements CrudDao<OrderAddress> {
     private final OrderAddressMapper orderAddressMapper;
 
-//    @PostConstruct
-    private void test() {
-        OrderAddress byId = orderAddressMapper.selectById(1);
-        System.out.println(byId);
-    }
 }

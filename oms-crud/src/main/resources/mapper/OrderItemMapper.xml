@@ -4,7 +4,7 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="org.arch.oms.entity.OrderItem">
-        <id column="id" property="id" />
+        <id column="order_item_no" property="orderItemNo" />
         <result column="app_id" property="appId" />
         <result column="store_no" property="storeNo" />
         <result column="order_no" property="orderNo" />
@@ -23,7 +23,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_id, store_no, order_no, product_no, product_pic, product_name, product_brand, product_price, product_quantity, product_sku_no, product_sku_code, product_category_id, product_attr, dt
+        order_item_no, app_id, store_no, order_no, product_no, product_pic, product_name, product_brand, product_price, product_quantity, product_sku_no, product_sku_code, product_category_id, product_attr, dt
     </sql>
 
 </mapper>

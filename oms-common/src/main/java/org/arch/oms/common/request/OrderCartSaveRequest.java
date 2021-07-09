@@ -15,7 +15,7 @@ public class OrderCartSaveRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String productId;
+    private String skuCode;
 
 
     private BigDecimal quantity;

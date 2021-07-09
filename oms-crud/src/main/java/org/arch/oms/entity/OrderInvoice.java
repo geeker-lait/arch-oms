@@ -39,7 +39,7 @@ public class OrderInvoice extends CrudEntity<OrderInvoice> {
     /**
      * 店编
      */
-    private Long storeNo;
+    private String storeNo;
 
     /**
      * 订单号
