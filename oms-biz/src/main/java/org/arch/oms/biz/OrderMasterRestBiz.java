@@ -55,12 +55,12 @@ public class OrderMasterRestBiz implements OrderMasterRest {
         Long appId = userHelper.getAppId();
         Long userId = userHelper.getUserId();
         final int maxProductSize = 30;
-        if (ObjectUtils.isNotEmpty(request.getProductNoList()) && request.getProductNoList().size() > maxProductSize) {
+        if (ObjectUtils.isNotEmpty(request.getProductSkuNoList()) && request.getProductSkuNoList().size() > maxProductSize) {
             throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("同一订单最多提交30个商品"));
         }
         // redisson 加锁 事务执行, 同一个用户同时只能提交一单
         LockExecuteResult<String> executeResult = lock.lock(Constant.CREATE_ORDER_REDIS_LOCK_PREFIX + userId, () -> {
-            OrderSaveDto orderSaveDTO = orderCreateManager.buildOrderInfo(request, userHelper.getUserId(), userHelper.getUserName(), appId);
+            OrderSaveDto orderSaveDTO = orderCreateManager.buildOrderInfo(request, userHelper.getTokenInfo(), appId);
             // 订单和订单附属信息 入库
             orderMasterService.saveOrderInfo(orderSaveDTO);
             return null;
