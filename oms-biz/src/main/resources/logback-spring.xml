@@ -6,8 +6,8 @@
     <property resource="application.yml" />
     <springProperty scope="context" name="springAppName" source="spring.application.name"/>
 
-    <property name="LOG_NAME" value="spring-ums-api"/>
-    <property name="LOG_HOME" value="logs"/>
+    <property name="LOG_NAME" value="arch-oms"/>
+    <property name="LOG_HOME" value="/data/logs"/>
 
     <property name="LOG_FILE" value="${LOG_HOME}/${LOG_NAME}-%d{yyyy-MM-dd}.%i.log"/>
     <property name="LOG_ERROR_FILE" value="${LOG_HOME}/${LOG_NAME}-%d{yyyy-MM-dd}.err.%i.log"/>
