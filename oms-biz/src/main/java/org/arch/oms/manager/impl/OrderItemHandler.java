@@ -49,7 +49,7 @@ public class OrderItemHandler extends OrderDetailHandler implements Initializing
             ProductSkuVo productSkuVo = entry.getKey();
             ProductSpuVo productSpuVo = productSkuVo.getProductSpuVo();
             OrderItem orderItem = new OrderItem();
-            orderItem.setOrderItemNo(String.format("%0"+ oderItemLength +"d", ++index[0]));
+            orderItem.setOrderItemNo(orderMaster.getId() + String.format("%0"+ oderItemLength +"d", ++index[0]));
             orderItem.setOrderNo(orderMaster.getId());
             orderItem.setAppId(orderMaster.getAppId());
             orderItem.setStoreNo(orderMaster.getStoreNo());
