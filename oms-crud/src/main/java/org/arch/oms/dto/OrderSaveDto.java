@@ -37,7 +37,6 @@ public class OrderSaveDto implements Serializable {
     /**
      * 订单子项集合
      */
-    @CrudServiceTypAnnotation(type = CrudServiceTyp.ORDER_ITEM)
     private List<Object> orderItem;
 
     /**

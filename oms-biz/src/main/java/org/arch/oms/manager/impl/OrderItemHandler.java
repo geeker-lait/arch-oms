@@ -65,18 +65,26 @@ public class OrderItemHandler extends OrderDetailHandler implements Initializing
             orderItem.setProductAttr(productSkuVo.getSpecJson());
             return orderItem;
         }).collect(Collectors.toList());
+        BigDecimal orderAmount = BigDecimal.ZERO;
         orderSaveDto.setOrderItem((List) collect);
+        Set<Map.Entry<ProductSkuVo, BigDecimal>> entries = skuVoBigDecimalMap.entrySet();
+        for (Map.Entry<ProductSkuVo, BigDecimal> entry : entries) {
+            ProductSkuVo productSkuVo = entry.getKey();
+            orderAmount = MoneyUtils.add(orderAmount, MoneyUtils.multiply(productSkuVo.getPrice(), entry.getValue()));
+        }
+        orderMaster.setOrderAmount(orderAmount);
 
     }
 
     @Override
     public BigDecimal buildOrderDetailRelish(Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap, OrderSaveDto orderSaveDto) {
+        // 暂时没有 促销，直接使用 sku价格
         BigDecimal orderAmount = BigDecimal.ZERO;
         Set<Map.Entry<ProductSkuVo, BigDecimal>> entries = skuVoBigDecimalMap.entrySet();
-        entries.forEach(entry -> {
+        for (Map.Entry<ProductSkuVo, BigDecimal> entry : entries) {
             ProductSkuVo productSkuVo = entry.getKey();
-            MoneyUtils.add(orderAmount, MoneyUtils.multiply(productSkuVo.getPrice(), entry.getValue()));
-        });
+            orderAmount = MoneyUtils.add(orderAmount, MoneyUtils.multiply(productSkuVo.getPrice(), entry.getValue()));
+        }
         return orderAmount;
     }
 

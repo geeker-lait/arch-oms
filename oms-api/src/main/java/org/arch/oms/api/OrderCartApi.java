@@ -1,5 +1,6 @@
 package org.arch.oms.api;
 
+import org.arch.framework.beans.Response;
 import org.arch.oms.common.request.OrderCartSaveRequest;
 import org.arch.oms.common.vo.OrderCartVo;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,7 @@ public interface OrderCartApi {
      * @return
      */
     @PostMapping("/save")
-    Boolean save(@RequestBody List<OrderCartSaveRequest> requests);
+    Response<Boolean> save(@RequestBody List<OrderCartSaveRequest> requests);
 
 
     /**
@@ -32,7 +33,7 @@ public interface OrderCartApi {
      * @return
      */
     @PostMapping("/delete")
-    Boolean delete(@RequestBody List<Long> ids);
+    Response<Boolean> delete(@RequestBody List<Long> ids);
 
 
     /**
@@ -40,5 +41,5 @@ public interface OrderCartApi {
      * @return
      */
     @GetMapping("get")
-    List<OrderCartVo> getCartList();
+    Response<List<OrderCartVo>> getCartList();
 }

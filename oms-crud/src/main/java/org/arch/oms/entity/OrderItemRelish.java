@@ -19,8 +19,6 @@ import java.util.Date;
  * @since 2021-06-22
  */
 @Data
-@Accessors(chain = true)
-@EqualsAndHashCode(callSuper = false)
 public class OrderItemRelish extends CrudEntity<OrderItemRelish> {
 
     private static final long serialVersionUID = 1L;

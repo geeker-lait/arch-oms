@@ -57,8 +57,12 @@ public class OrderCartService extends CrudService<OrderCart, Long> implements In
         List<OrderCart> updateList = Lists.newArrayList();
         insertList.addAll(orderCarts.stream().filter(orderCart -> !existProductList.containsKey(orderCart.getProductSkuNo())).collect(Collectors.toList()));
         // 根据商品id 查询 全部是空 表示全部是新增
-        updateList.addAll(orderCarts.stream().filter(orderCart -> existProductList.containsKey(orderCart.getProductSkuNo()))
-                .map(orderCart -> orderCart.setId(existProductList.get(orderCart.getId()))).collect(Collectors.toList()));
+        List<OrderCart> updateOrderCart = orderCarts.stream().filter(orderCart -> existProductList.containsKey(orderCart.getProductSkuNo()))
+                .map(orderCart -> {
+                    orderCart.setId(existProductList.get(orderCart.getProductSkuNo()));
+                    return orderCart;
+                }).collect(Collectors.toList());
+        updateList.addAll(updateOrderCart);
         if (CollectionUtils.isNotEmpty(updateList)) {
             orderCartDao.updateBatchById(updateList);
         }

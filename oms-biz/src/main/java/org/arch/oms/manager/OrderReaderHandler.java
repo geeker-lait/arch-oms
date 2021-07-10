@@ -24,12 +24,12 @@ public abstract class OrderReaderHandler {
 
     /**
      * 根据指定订单号列表查询
-     * @param userId
+     * @param accountId
      * @param orderIds
      * @param orderSectionRequest
      * @return
      */
-    public abstract List<OrderInfoVo> queryListOrder(Long userId, List<Long> orderIds, OrderSectionRequest orderSectionRequest);
+    public abstract List<OrderInfoVo> queryListOrder(Long accountId, List<Long> orderIds, OrderSectionRequest orderSectionRequest);
 
     /**
      * 用户查询订单 by page

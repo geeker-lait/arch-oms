@@ -3,8 +3,6 @@ package org.arch.oms.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 import org.arch.framework.crud.CrudEntity;
 
 import java.io.Serializable;
@@ -20,8 +18,6 @@ import java.util.Date;
  * @since 2021-06-22
  */
 @Data
-@Accessors(chain = true)
-@EqualsAndHashCode(callSuper = false)
 public class OrderItem extends CrudEntity<OrderItem> {
 
     private static final long serialVersionUID = 1L;

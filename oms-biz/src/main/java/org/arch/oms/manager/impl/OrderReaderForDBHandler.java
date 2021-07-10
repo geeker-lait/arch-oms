@@ -73,9 +73,9 @@ public class OrderReaderForDBHandler extends OrderReaderHandler implements Initi
     private OrderPaymentService orderPaymentService;
 
     @Override
-    public List<OrderInfoVo> queryListOrder(Long userId, List<Long> orderIds, OrderSectionRequest orderSectionRequest) {
+    public List<OrderInfoVo> queryListOrder(Long accountId, List<Long> orderIds, OrderSectionRequest orderSectionRequest) {
         LambdaQueryWrapper<OrderMaster> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(OrderMaster::getBuyerAccountId, userId).in(OrderMaster::getId, orderIds);
+        queryWrapper.eq(OrderMaster::getBuyerAccountId, accountId).in(OrderMaster::getId, orderIds);
         List<OrderMaster> oneBySpec = orderMasterService.findAllBySpec(queryWrapper);
         if (ObjectUtils.isEmpty(oneBySpec)) {
             return Lists.newArrayList();
@@ -87,7 +87,7 @@ public class OrderReaderForDBHandler extends OrderReaderHandler implements Initi
     public PageVo<List<OrderInfoVo>> queryOrderPageList(OrderInfoSearchDto request) {
         PageInfo pageInfo = request.getPageInfo() == null ? new PageInfo().checkPageInfo() : request.getPageInfo().checkPageInfo();
         LambdaQueryWrapper<OrderMaster> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(OrderMaster::getBuyerAccountId, request.getUserId()).eq(OrderMaster::getAppId, request.getAppId());
+        queryWrapper.eq(OrderMaster::getBuyerAccountId, request.getAccountId()).eq(OrderMaster::getAppId, request.getAppId());
         if (request.getStoreNo() != null) {
             queryWrapper.eq(OrderMaster::getStoreNo, request.getStoreNo());
         }
@@ -105,8 +105,8 @@ public class OrderReaderForDBHandler extends OrderReaderHandler implements Initi
         if (request.getAppId() != null) {
             queryWrapper.eq(OrderMaster::getAppId, request.getAppId());
         }
-        if (request.getUserId() != null) {
-            queryWrapper.eq(OrderMaster::getBuyerAccountId, request.getUserId());
+        if (request.getAccountId() != null) {
+            queryWrapper.eq(OrderMaster::getBuyerAccountId, request.getAccountId());
         }
         if (ObjectUtils.isNotEmpty(request.getOrderNoList())) {
             queryWrapper.in(OrderMaster::getId, request.getOrderNoList());
@@ -249,7 +249,7 @@ public class OrderReaderForDBHandler extends OrderReaderHandler implements Initi
             Map<Long, List<OrderItemRelish>> orderNoRelevancy = allBySpec.stream().collect(Collectors.groupingBy(orderInvoice -> orderInvoice.getOrderNo(), Collectors.toList()));
             orderNoRelevancy.entrySet().forEach(entrySet -> {
                 if (collect.containsKey(entrySet.getKey()) && ObjectUtils.isNotEmpty(entrySet.getValue())) {
-                    collect.get(entrySet.getKey()).setOrderItemRelishVo(BeanCopyUtil.convert(entrySet.getValue().get(0), OrderItemRelishVo.class));
+                    collect.get(entrySet.getKey()).setOrderItemRelishVo(BeanCopyUtil.convert(entrySet.getValue(), OrderItemRelishVo.class));
                 }
             });
         };

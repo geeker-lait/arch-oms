@@ -6,5 +6,5 @@ package org.arch.oms.common.common;
  * 2021-07-07
  */
 public class Constant {
-    public static final String OMS_SERVICE_NAME = "arch-oms-api";
+    public static final String OMS_SERVICE_NAME = "arch-oms";
 }

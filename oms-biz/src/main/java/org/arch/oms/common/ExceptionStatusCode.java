@@ -1,6 +1,7 @@
 package org.arch.oms.common;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.arch.framework.beans.enums.StatusCode;
 
 /**
@@ -9,6 +10,7 @@ import org.arch.framework.beans.enums.StatusCode;
  * @version V1.0
  * 2021-06-26
  */
+@NoArgsConstructor
 @AllArgsConstructor
 public class ExceptionStatusCode implements StatusCode {
 
@@ -16,17 +18,14 @@ public class ExceptionStatusCode implements StatusCode {
 
     private String descr;
 
-
-
-
     @Override
     public int getCode() {
-        return 0;
+        return code;
     }
 
     @Override
     public String getDescr() {
-        return null;
+        return descr;
     }
 
     public static ExceptionStatusCode getDefaultExceptionCode(String descr) {

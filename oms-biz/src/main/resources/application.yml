@@ -4,7 +4,7 @@ server:
     context-path: /
 spring:
   application:
-    name: arch-oms-api
+    name: arch-oms
   freemarker:
     check-template-location: false
     settings:
@@ -19,7 +19,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
+        server-addr: 192.168.31.31:58887
 
   profiles:
     include: db,redis
@@ -42,7 +42,12 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.31.31:58887
-
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 10000 #单位毫秒
+        readTimeout: 10000 #单位毫秒
 
 logging:
   config: classpath:logback-spring-dev.xml

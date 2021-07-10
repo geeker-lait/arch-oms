@@ -1,9 +1,8 @@
 package org.arch.oms.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 public class BeanCopyUtil {
-
 
     private static Lock initLock = new ReentrantLock();
 
@@ -75,7 +73,7 @@ public class BeanCopyUtil {
         final BeanCopier beanCopier = getBeanCopier(source.getClass(), targetClass);
         try {
             T target = targetClass.newInstance();
-            BeanUtils.copyProperties(source, target);
+            beanCopier.copy(source, target, null);
             return target;
 
         } catch (Exception e) {

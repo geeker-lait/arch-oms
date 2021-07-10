@@ -7,12 +7,11 @@ import java.io.Serializable;
 /**
  * @author junboXiang
  * @version V1.0
- * 2021-07-07
+ * 2021-07-10
  */
 @Data
-public class OrderInfoQueryRequest  implements Serializable {
+public class PayOrderByCardRequest implements Serializable {
     private static final long serialVersionUID = 1L;
+    private Long id;
     private Long orderId;
-    private OrderSectionRequest orderSectionRequest;
-
 }

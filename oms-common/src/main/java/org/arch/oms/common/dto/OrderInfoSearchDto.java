@@ -30,7 +30,7 @@ public class OrderInfoSearchDto implements Serializable {
     /**
      * 用户id
      */
-    private Long userId;
+    private Long accountId;
 
     /**
      * 订单状态

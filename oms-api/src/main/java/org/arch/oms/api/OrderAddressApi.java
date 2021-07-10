@@ -1,5 +1,6 @@
 package org.arch.oms.api;
 
+import org.arch.framework.beans.Response;
 import org.arch.oms.common.request.OrderAddressRequest;
 import org.arch.oms.common.vo.OrderAddressVo;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,6 @@ public interface OrderAddressApi {
      * @return
      */
     @PostMapping("get")
-    List<OrderAddressVo> getOrderAddressByRequest(@RequestBody OrderAddressRequest request);
+    Response<List<OrderAddressVo>> getOrderAddressByRequest(@RequestBody OrderAddressRequest request);
 
 }

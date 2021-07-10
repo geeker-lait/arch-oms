@@ -2,6 +2,7 @@ package org.arch.oms.manager.pms;
 
 import lombok.extern.slf4j.Slf4j;
 import org.arch.pms.admin.api.SkuFeignApi;
+import org.arch.pms.admin.api.req.ProductSkuReq;
 import org.arch.pms.admin.api.res.ProductSkuVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,9 @@ public class SkuManager {
      * @return
      */
     public ProductSkuVo getBySkuCode(String skuNo) {
-        return skuFeignApi.skuGet(skuNo);
+        ProductSkuReq productSkuReq = new ProductSkuReq();
+        productSkuReq.setSkuNo(skuNo);
+        return skuFeignApi.skuGet(productSkuReq).getData();
     }
 
     /**
@@ -39,9 +42,12 @@ public class SkuManager {
      * @return
      */
     public List<ProductSkuVo> getProductSkuList(Collection<String> skuNoList) {
-        return skuNoList.stream().map(skuNo -> skuFeignApi.skuGet(skuNo)).collect(Collectors.toList());
+        ProductSkuReq productSkuReq = new ProductSkuReq();
+        return skuNoList.stream().map(skuNo -> {
+            productSkuReq.setSkuNo(skuNo);
+            return skuFeignApi.skuGet(productSkuReq).getData();
+        }).collect(Collectors.toList());
     }
-
 
 
 

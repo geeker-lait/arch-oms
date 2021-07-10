@@ -3,6 +3,7 @@ package org.arch.oms.biz;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.extern.slf4j.Slf4j;
+import org.arch.framework.beans.Response;
 import org.arch.oms.common.request.OrderAddressRequest;
 import org.arch.oms.common.vo.OrderAddressVo;
 import org.arch.oms.entity.OrderAddress;
@@ -32,13 +33,13 @@ public class OrderAddressRestBiz implements OrderAddressRest {
     private OrderAddressService orderAddressService;
 
     @Override
-    public List<OrderAddressVo> getOrderAddressByRequest(@RequestBody OrderAddressRequest request) {
+    public Response<List<OrderAddressVo>> getOrderAddressByRequest(@RequestBody OrderAddressRequest request) {
         ValidatorUtil.checkNull(request, "请填写查询参数");
         ValidatorUtil.checkNull(request.getOrderNo(), "请填写查询参数");
-        ValidatorUtil.checkNull(request.getUserId(), "请填写查询用户id");
+        ValidatorUtil.checkNull(request.getAccountId(), "请填写查询用户id");
         LambdaQueryWrapper<OrderAddress> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(OrderAddress::getOrderNo, request.getOrderNo());
         List<OrderAddress> list = orderAddressService.findAllBySpec(queryWrapper);
-        return BeanCopyUtil.convert(list, OrderAddressVo.class);
+        return Response.success(BeanCopyUtil.convert(list, OrderAddressVo.class));
     }
 }

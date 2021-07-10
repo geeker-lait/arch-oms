@@ -120,12 +120,12 @@ public class OrderCartManager {
     /**
      * 验证购物车集合是否失效并更新
      * @param appId
-     * @param userId
+     * @param accountId
      * @return
      */
-    public List<OrderCart> verifyOrderCartState(Long appId, Long userId) {
+    public List<OrderCart> verifyOrderCartState(Long appId, Long accountId) {
         LambdaQueryWrapper<OrderCart> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(OrderCart::getAppId, appId).eq(OrderCart::getBuyerAccountId, userId);
+        queryWrapper.eq(OrderCart::getAppId, appId).eq(OrderCart::getBuyerAccountId, accountId);
         List<OrderCart> list = orderCartService.findAllBySpec(queryWrapper);
         if (ObjectUtils.isEmpty(list)) {
             return Lists.newArrayList();

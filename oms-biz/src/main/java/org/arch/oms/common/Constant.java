@@ -34,4 +34,7 @@ public class Constant {
      * 订单创建前缀
      */
     public static final String CREATE_ORDER_REDIS_LOCK_PREFIX = "oms:order:create:";
+
+
+    public static final String ORDER_EVENT_REDIS_LOCK_PREFIX = "oms:order:event:";
 }

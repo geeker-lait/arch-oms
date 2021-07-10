@@ -22,7 +22,7 @@ public class OrderInfoVo implements Serializable {
 
     private OrderInvoiceVo orderInvoiceVo;
 
-    private OrderItemRelishVo orderItemRelishVo;
+    private List<OrderItemRelishVo> orderItemRelishVo;
 
     private OrderPaymentVo orderPaymentVo;
 

@@ -1,5 +1,7 @@
 package org.arch.oms.common.request;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +10,7 @@ import java.io.Serializable;
  * @version V1.0
  * 2021-06-30
  */
+@Data
 public class OrderSectionRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;

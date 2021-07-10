@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -41,6 +42,27 @@ public class RedisDistributeLock {
         boolean lockSuccess = lock.tryLock();
         try {
             return lockSuccess ? new LockExecuteResult<>(true, business.get()) : new LockExecuteResult<>(false, null);
+        } finally {
+            if (lockSuccess && lock.isLocked()) {
+                lock.unlock();
+            }
+        }
+    }
+
+    /**
+     * 加锁执行有返回值
+     * @param key
+     * @param business
+     * @param t
+     * @param <T>
+     * @param <R>
+     * @return
+     */
+    public <T,R> LockExecuteResult lock(String key, Function<T,LockExecuteResult<R>> business, T t) {
+        RLock lock = redissonClient.getLock(key);
+        boolean lockSuccess = lock.tryLock();
+        try {
+            return lockSuccess ? business.apply(t) : new LockExecuteResult<>(false, null);
         } finally {
             if (lockSuccess && lock.isLocked()) {
                 lock.unlock();

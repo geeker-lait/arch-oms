@@ -11,7 +11,7 @@ public class OrderAddressRequest implements Serializable {
 
     private Long orderNo;
 
-    private Long userId;
+    private Long accountId;
 
 }
 

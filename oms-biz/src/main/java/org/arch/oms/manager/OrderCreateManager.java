@@ -14,9 +14,17 @@ import org.arch.oms.common.ExceptionStatusCode;
 import org.arch.oms.common.enums.OrderAddressUserTyp;
 import org.arch.oms.common.enums.OrderInvoiceTyp;
 import org.arch.oms.common.enums.OrderItemTable;
+import org.arch.oms.common.enums.OrderPaymentState;
 import org.arch.oms.common.enums.OrderSource;
 import org.arch.oms.common.enums.OrderState;
 import org.arch.oms.common.request.OrderSaveRequest;
+import org.arch.oms.common.vo.OrderAddressVo;
+import org.arch.oms.common.vo.OrderFulfilVo;
+import org.arch.oms.common.vo.OrderInfoVo;
+import org.arch.oms.common.vo.OrderInvoiceVo;
+import org.arch.oms.common.vo.OrderItemRelishVo;
+import org.arch.oms.common.vo.OrderMasterVo;
+import org.arch.oms.common.vo.OrderPaymentVo;
 import org.arch.oms.dto.OrderSaveDto;
 import org.arch.oms.entity.OrderAddress;
 import org.arch.oms.entity.OrderFulfil;
@@ -25,6 +33,7 @@ import org.arch.oms.entity.OrderMaster;
 import org.arch.oms.entity.OrderPayment;
 import org.arch.oms.manager.pms.SkuManager;
 import org.arch.oms.manager.ums.UserAddressManager;
+import org.arch.oms.utils.BeanCopyUtil;
 import org.arch.oms.utils.MoneyUtils;
 import org.arch.oms.utils.ValidatorUtil;
 import org.arch.pms.admin.api.res.ProductSkuVo;
@@ -74,7 +83,7 @@ public class OrderCreateManager {
         // 存放商品信息集合
         Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap = Maps.newHashMap();
         if (CollectionUtils.isNotEmpty(request.getOrderCartList())) {
-            Map<ProductSkuVo, BigDecimal> productSkuVos = orderCartManager.verifyOrderCartState(appId, tokenInfo.getUserId(), request.getOrderCartList());
+            Map<ProductSkuVo, BigDecimal> productSkuVos = orderCartManager.verifyOrderCartState(appId, tokenInfo.getAccountId(), request.getOrderCartList());
             // 判断购物车商品是否属于同一个商家
             if (ObjectUtils.isNotEmpty(productSkuVos) && productSkuVos.keySet().stream().map(productSkuVo -> productSkuVo.getProductSpuVo().getStoreNo()).collect(Collectors.toSet()).size() > 0) {
                 throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("不同商家产品不能同时提交"));
@@ -85,7 +94,7 @@ public class OrderCreateManager {
 
         }
         // 查询商品并加入到list中
-        if (ObjectUtils.isEmpty(request.getProductSku())) {
+        if (ObjectUtils.isNotEmpty(request.getProductSku())) {
             request.getProductSku().forEach(cartRequest -> {
                 ValidatorUtil.checkNull(cartRequest.getQuantity(), "购买数量不能为空");
                 ValidatorUtil.checkBlank(cartRequest.getSkuCode(), "sku code 不能为空");
@@ -95,7 +104,7 @@ public class OrderCreateManager {
                 }
             });
             List<ProductSkuVo> productSkuList = skuManager.getProductSkuList(request.getProductSku().stream().map(productSku -> productSku.getSkuCode()).collect(Collectors.toList()));
-            if (CollectionUtils.isEmpty(productSkuList)) {
+            if (CollectionUtils.isNotEmpty(productSkuList)) {
                 Map<String, BigDecimal> collect = request.getProductSku().stream().collect(Collectors.toMap(OrderSaveRequest.ProductSku::getSkuCode, OrderSaveRequest.ProductSku::getQuantity));
                 Map<ProductSkuVo, BigDecimal> productQuantityMap = productSkuList.stream().collect(Collectors.toMap(productSkuVo -> productSkuVo, productSkuVo -> collect.get(productSkuVo.getSkuNo())));
                 skuVoBigDecimalMap.putAll(productQuantityMap);
@@ -114,7 +123,7 @@ public class OrderCreateManager {
         // 生成 发票数据
         buildOrderInvoiceInfo(orderSaveDto, request);
         // 生成 用户地址信息
-        buildAddressInfo(orderSaveDto, request);
+        buildAddressInfo(orderSaveDto, request, tokenInfo);
         // 生成 履约信息
         buildFulFilInfo(orderSaveDto);
         // 支付表信息
@@ -131,19 +140,25 @@ public class OrderCreateManager {
     private void buildOrderMasterInfo(TokenInfo tokenInfo, Long appId, OrderSaveDto dto, Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap) {
         OrderMaster orderMaster = new OrderMaster();
         Set<ProductSkuVo> productSkuVos = skuVoBigDecimalMap.keySet();
-        orderMaster.setId(Long.valueOf(idService.generateId(IdKey.OMS_ORDER_ID)))
-                .setAppId(appId).setBuyerAccountId(tokenInfo.getAccountId()).setBuyerAccountName(tokenInfo.getAccountName())
+        orderMaster.setId(Long.valueOf(idService.generateId(IdKey.OMS_ORDER_ID)));
+        orderMaster.setAppId(appId);
+        orderMaster.setBuyerAccountId(tokenInfo.getAccountId());
+        orderMaster.setBuyerAccountName(tokenInfo.getAccountName());
                 // 默认创建订单待支付状态
-                .setOrderState(OrderState.WAITING_PAYMENT.getValue()).setOrderTime(new Date())
-                .setOrderTime(new Date()).setStoreNo(Lists.newArrayList(productSkuVos).get(0).getProductSpuVo().getStoreNo())
-                .setOrderTable(OrderItemTable.PERSONAL.getValue()).setOrderSource(OrderSource.AVAILABLE.getValue())
-        ;
+        orderMaster.setOrderState(OrderState.WAITING_PAYMENT.getValue());
+        orderMaster.setOrderTime(new Date());
+        orderMaster.setOrderTime(new Date());
+        orderMaster.setStoreNo(Lists.newArrayList(productSkuVos).get(0).getProductSpuVo().getStoreNo());
+        orderMaster.setOrderTable(OrderItemTable.PERSONAL.getValue());
+        orderMaster.setOrderSource(OrderSource.AVAILABLE.getValue());
+
         BigDecimal orderAmount = BigDecimal.ZERO;
         productSkuVos.forEach(skuProduct -> {
             MoneyUtils.add(orderAmount, skuProduct.getPrice());
         });
+        dto.setOrderDetailTable(OrderItemTable.PERSONAL.getValue());
         orderMaster.setOrderAmount(orderAmount);
-        // todo 缺少商品卖家信息
+        // fixme 缺少商品卖家信息
         dto.setOrderMaster(orderMaster);
     }
 
@@ -155,7 +170,6 @@ public class OrderCreateManager {
     private void buildOrderItemInfo(OrderSaveDto dto, Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap) {
         OrderDetailHandler handler = OrderDetailHandler.getHandler(dto.getOrderDetailTable());
         handler.convertDoByProductSkuVo(skuVoBigDecimalMap, dto);
-
     }
 
     /**
@@ -182,16 +196,16 @@ public class OrderCreateManager {
         OrderSaveRequest.InvoiceInfo invoiceInfo = request.getInvoiceInfo();
 
         OrderInvoice orderInvoice = new OrderInvoice();
-        orderInvoice.setAmount(orderMaster.getOrderAmount())
-                .setAppId(orderMaster.getAppId())
-                .setStoreNo(orderMaster.getStoreNo())
-                .setOrderNo(orderMaster.getId())
-                .setInvoiceTyp(invoiceInfo.getInvoiceTyp())
-                .setInvoiceNo(invoiceInfo.getInvoiceTitle())
-                .setInvoiceTitle(invoiceInfo.getInvoiceTitle())
-                .setRemark(invoiceInfo.getRemark())
-                .setReceiveEmail(invoiceInfo.getInvoiceEmail())
-                .setInvoiceItem(invoiceInfo.getInvoiceDetail());
+        orderInvoice.setAmount(orderMaster.getPayAmount());
+        orderInvoice.setAppId(orderMaster.getAppId());
+        orderInvoice.setStoreNo(orderMaster.getStoreNo());
+        orderInvoice.setOrderNo(orderMaster.getId());
+        orderInvoice.setInvoiceTyp(invoiceInfo.getInvoiceTyp());
+        orderInvoice.setInvoiceNo(invoiceInfo.getInvoiceTitle());
+        orderInvoice.setInvoiceTitle(invoiceInfo.getInvoiceTitle());
+        orderInvoice.setRemark(invoiceInfo.getRemark());
+        orderInvoice.setReceiveEmail(invoiceInfo.getInvoiceEmail());
+        orderInvoice.setInvoiceItem(invoiceInfo.getInvoiceDetail());
         dto.setOrderInvoice(orderInvoice);
     }
 
@@ -199,13 +213,13 @@ public class OrderCreateManager {
      * 构建用户收货信息
      * @param request
      */
-    private void buildAddressInfo(OrderSaveDto dto, OrderSaveRequest request) {
+    private void buildAddressInfo(OrderSaveDto dto, OrderSaveRequest request, TokenInfo tokenInfo) {
         OrderMaster orderMaster = dto.getOrderMaster();
         if (request.getAddressId() == null) {
             log.info("订单没有选择地址不生成订单配送地址数据 orderId:{}", orderMaster.getId());
             return;
         }
-        UserAddressResponse userAddress = userAddressManager.getUserAddressById(request.getAddressId(), orderMaster.getBuyerAccountId());
+        UserAddressResponse userAddress = userAddressManager.getUserAddressById(request.getAddressId(), tokenInfo.getUserId());
         if (userAddress == null) {
             throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("用户地址不存在"));
         }
@@ -242,7 +256,6 @@ public class OrderCreateManager {
         orderFulfil.setAppId(orderMaster.getAppId());
         orderFulfil.setOrderNo(orderMaster.getId());
         orderFulfil.setStoreNo(orderMaster.getStoreNo());
-//        orderFulfil.setFulfilNo(idService.generateId())
         dto.setOrderFulfil(orderFulfil);
 
     }
@@ -256,8 +269,32 @@ public class OrderCreateManager {
         orderPayment.setAccountId(orderMaster.getBuyerAccountId());
         orderPayment.setAccountName(orderMaster.getBuyerAccountName());
         orderPayment.setAmount(orderMaster.getPayAmount());
+        orderPayment.setOrderNo(orderMaster.getId());
         // todo 用户手机号
-//        orderPayment.setPhoneNo(tokenInfo.get)
+        orderPayment.setPayState(OrderPaymentState.WAITING_PAYMENT.getValue());
+        dto.setOrderPayment(orderPayment);
+    }
+
+    /**
+     * 将创建的保存订单 转换成 Vo返回给前端
+     * @param dto
+     * @return
+     */
+    public OrderInfoVo convertOrderSaveDtoToOrderInfoVo(OrderSaveDto dto) {
+        if (dto == null) {
+            return null;
+        }
+        OrderDetailHandler handler = OrderDetailHandler.getHandler(dto.getOrderDetailTable());
+        OrderInfoVo orderInfoVo = new OrderInfoVo();
+        orderInfoVo.setOrderDetailVo(handler.convertVo(dto.getOrderItem()));
+        orderInfoVo.setOrderPaymentVo(BeanCopyUtil.convert(dto.getOrderPayment(), OrderPaymentVo.class));
+        orderInfoVo.setOrderItemRelishVo(BeanCopyUtil.convert(dto.getOrderItemRelish(), OrderItemRelishVo.class));
+        orderInfoVo.setOrderInvoiceVo(BeanCopyUtil.convert(dto.getOrderInvoice(), OrderInvoiceVo.class));
+        orderInfoVo.setOrderMasterVo(BeanCopyUtil.convert(dto.getOrderMaster(), OrderMasterVo.class));
+        orderInfoVo.setOrderFulfilVo(BeanCopyUtil.convert(dto.getOrderFulfil(), OrderFulfilVo.class));
+        OrderAddressVo convert = BeanCopyUtil.convert(dto.getOrderAddress(), OrderAddressVo.class);
+        orderInfoVo.setOrderAddressVoList(ObjectUtils.isEmpty(convert) ? null : Lists.newArrayList(convert));
+        return orderInfoVo;
     }
 
 

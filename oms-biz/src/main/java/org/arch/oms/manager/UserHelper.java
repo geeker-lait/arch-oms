@@ -1,10 +1,11 @@
 package org.arch.oms.manager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.arch.framework.beans.TokenInfo;
+import org.arch.framework.beans.utils.TokenInfoUtils;
+import org.arch.framework.ums.tenant.context.handler.ArchContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 用户信息工具类
@@ -16,10 +17,18 @@ import javax.servlet.http.HttpServletRequest;
 public class UserHelper {
 
     @Autowired
-    private HttpServletRequest httpServletRequest;
+    private ArchContextHolder archContextHolder;
 
     public TokenInfo getTokenInfo() {
-        return null;
+        TokenInfo tokenInfo = TokenInfoUtils.getTokenInfo();
+        if (tokenInfo == null) {
+            tokenInfo = new TokenInfo();
+            tokenInfo.setUserId(1L);
+            tokenInfo.setAccountId(2L);
+            tokenInfo.setAccountName("test");
+
+        }
+        return tokenInfo;
     }
 
     /**
@@ -27,8 +36,15 @@ public class UserHelper {
      * @return
      */
     public Long getUserId() {
-//        return SecurityUtils.getCurrentUserId();
-        return null;
+        return getTokenInfo().getUserId();
+    }
+
+    /**
+     * 获取当前登录用户id
+     * @return
+     */
+    public Long getAccountId() {
+        return getTokenInfo().getAccountId();
     }
 
     /**
@@ -36,16 +52,19 @@ public class UserHelper {
      * @return
      */
     public String getUserName() {
-//        return SecurityUtils.getAccountName();
-        return null;
+        return getTokenInfo().getAccountName();
     }
 
     /**
-     * 获取appId
+     * 获取appId 为空 给1
      * @return
      */
     public Long getAppId() {
-        return -1L;
+        String appId = archContextHolder.getArchInfo().getAppId();
+        if (StringUtils.isEmpty(appId)) {
+            return 1L;
+        }
+        return Long.valueOf(appId);
     }
 
 

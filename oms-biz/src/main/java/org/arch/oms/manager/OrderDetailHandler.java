@@ -47,11 +47,7 @@ public abstract class OrderDetailHandler {
     public abstract BigDecimal buildOrderDetailRelish (Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap, OrderSaveDto orderSaveDto);
 
     protected static int getOderItemLength(int productNum) {
-        String str = "";
-        for (int i = 0; i < productNum; i++) {
-            str += "0";
-        }
-        return Integer.valueOf("1" + str);
+        return String.valueOf(productNum).length() + 1;
     }
 
 }

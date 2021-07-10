@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.arch.framework.beans.Response;
 import org.arch.framework.beans.exception.BusinessException;
 import org.arch.oms.common.ExceptionStatusCode;
 import org.arch.oms.common.request.OrderCartSaveRequest;
@@ -44,38 +45,38 @@ public class OrderCartRestBiz implements OrderCartRest {
     private OrderCartManager orderCartManager;
 
     @Override
-    public Boolean save(@RequestBody List<OrderCartSaveRequest> requests) {
-        Long userId = userHelper.getUserId();
+    public Response<Boolean> save(@RequestBody List<OrderCartSaveRequest> requests) {
+        Long accountId = userHelper.getAccountId();
         Long appId = userHelper.getAppId();
         if (CollectionUtils.isEmpty(requests)) {
-            return true;
+            return Response.success(Boolean.TRUE);
         }
         // fixme 此出数量 可以按照应用 维度从配置中心读取
         final int cartNumMax = 10;
         LambdaQueryWrapper<OrderCart> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(OrderCart::getAppId, appId).eq(OrderCart::getBuyerAccountId, userId);
+        queryWrapper.eq(OrderCart::getAppId, appId).eq(OrderCart::getBuyerAccountId, accountId);
         long count = orderCartService.countBySpec(queryWrapper);
         if (requests.size() > cartNumMax || count + requests.size() > cartNumMax) {
             throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode(MessageFormat.format("购物车最大数量是{0}", cartNumMax)));
         }
         List<OrderCart> orderCarts = orderCartManager.buildAndCheckOrderCart(requests, userHelper.getTokenInfo(), appId);
-        return orderCartService.saveCarts(orderCarts, userId);
+        return Response.success(orderCartService.saveCarts(orderCarts, accountId));
     }
 
     @Override
-    public Boolean delete(@RequestBody List<Long> ids) {
+    public Response<Boolean> delete(@RequestBody List<Long> ids) {
         if (CollectionUtils.isNotEmpty(ids)) {
-            return Boolean.TRUE;
+            return Response.success(Boolean.TRUE);
         }
-        return orderCartService.deleteByIds(ids, userHelper.getUserId());
+        return Response.success(orderCartService.deleteByIds(ids, userHelper.getUserId()));
     }
 
     @Override
-    public List<OrderCartVo> getCartList() {
-        Long userId = userHelper.getUserId();
+    public Response<List<OrderCartVo>> getCartList() {
+        Long accountId = userHelper.getAccountId();
         Long appId = userHelper.getAppId();
         // 调用获取商品规格信息是否变更，变更了批量update 购物车状态 数据
-        List<OrderCart> orderCarts = orderCartManager.verifyOrderCartState(appId, userId);
+        List<OrderCart> orderCarts = orderCartManager.verifyOrderCartState(appId, accountId);
         // fixme 是否分组排序可以根据appId从配置获取
         boolean enableSort = true;
         if (CollectionUtils.isNotEmpty(orderCarts) && enableSort) {
@@ -89,7 +90,7 @@ public class OrderCartRestBiz implements OrderCartRest {
             orderCarts= finalOrderCarts;
 
         }
-        return BeanCopyUtil.convert(orderCarts, OrderCartVo.class);
+        return Response.success(BeanCopyUtil.convert(orderCarts, OrderCartVo.class));
     }
 
 }

@@ -28,7 +28,7 @@ public class OrderInfoManagerQueryRequest implements Serializable {
     /**
      * 用户id
      */
-    private Long userId;
+    private Long accountId;
 
     /**
      * 订单状态
