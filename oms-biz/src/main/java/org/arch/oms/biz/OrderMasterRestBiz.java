@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 /**
@@ -54,9 +55,9 @@ public class OrderMasterRestBiz implements OrderMasterRest {
     public Boolean save(@RequestBody OrderSaveRequest request) {
         Long appId = userHelper.getAppId();
         Long userId = userHelper.getUserId();
-        final int maxProductSize = 30;
-        if (ObjectUtils.isNotEmpty(request.getProductSkuNoList()) && request.getProductSkuNoList().size() > maxProductSize) {
-            throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("同一订单最多提交30个商品"));
+        final int maxProductSize = 10;
+        if (ObjectUtils.isNotEmpty(request.getProductSku()) && request.getProductSku().size() > maxProductSize) {
+            throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode(MessageFormat.format("同一订单最多提交{0}个商品", maxProductSize)));
         }
         // redisson 加锁 事务执行, 同一个用户同时只能提交一单
         LockExecuteResult<String> executeResult = lock.lock(Constant.CREATE_ORDER_REDIS_LOCK_PREFIX + userId, () -> {

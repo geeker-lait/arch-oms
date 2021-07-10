@@ -1,29 +1,33 @@
 package org.arch.oms.manager;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.arch.framework.api.IdKey;
 import org.arch.framework.beans.TokenInfo;
 import org.arch.framework.beans.exception.BusinessException;
 import org.arch.framework.id.IdService;
+import org.arch.oms.common.Constant;
 import org.arch.oms.common.ExceptionStatusCode;
 import org.arch.oms.common.enums.OrderAddressUserTyp;
 import org.arch.oms.common.enums.OrderInvoiceTyp;
 import org.arch.oms.common.enums.OrderItemTable;
+import org.arch.oms.common.enums.OrderSource;
 import org.arch.oms.common.enums.OrderState;
 import org.arch.oms.common.request.OrderSaveRequest;
 import org.arch.oms.dto.OrderSaveDto;
 import org.arch.oms.entity.OrderAddress;
-import org.arch.oms.entity.OrderCart;
 import org.arch.oms.entity.OrderFulfil;
 import org.arch.oms.entity.OrderInvoice;
 import org.arch.oms.entity.OrderMaster;
 import org.arch.oms.entity.OrderPayment;
+import org.arch.oms.manager.pms.SkuManager;
 import org.arch.oms.manager.ums.UserAddressManager;
-import org.arch.oms.service.OrderCartService;
+import org.arch.oms.utils.MoneyUtils;
+import org.arch.oms.utils.ValidatorUtil;
+import org.arch.pms.admin.api.res.ProductSkuVo;
 import org.arch.ums.user.res.UserAddressResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,6 +35,8 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -45,9 +51,11 @@ public class OrderCreateManager {
     @Autowired
     private IdService idService;
     @Autowired
-    private OrderCartService orderCartService;
-    @Autowired
     private UserAddressManager userAddressManager;
+    @Autowired
+    private OrderCartManager orderCartManager;
+    @Autowired
+    private SkuManager skuManager;
 
     /**
      * 通过创建用户请求转换成 oder
@@ -60,36 +68,49 @@ public class OrderCreateManager {
          *
          * 2.生成订单相关数据
          */
-        if (CollectionUtils.isEmpty(request.getOrderCartList()) && CollectionUtils.isEmpty(request.getProductSkuNoList())) {
+        if (CollectionUtils.isEmpty(request.getOrderCartList()) && ObjectUtils.isEmpty(request.getProductSku())) {
             throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("提交订单没有任何商品数据"));
         }
         // 存放商品信息集合
-        List<Object> productList = Lists.newArrayList();
+        Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap = Maps.newHashMap();
         if (CollectionUtils.isNotEmpty(request.getOrderCartList())) {
-            LambdaQueryWrapper<OrderCart> cartWrapper = Wrappers.lambdaQuery();
-            cartWrapper.in(OrderCart::getId, request.getOrderCartList()).eq(OrderCart::getBuyerAccountId, tokenInfo.getAccountId());
-            List<OrderCart> carts = orderCartService.findAllBySpec(cartWrapper);
+            Map<ProductSkuVo, BigDecimal> productSkuVos = orderCartManager.verifyOrderCartState(appId, tokenInfo.getUserId(), request.getOrderCartList());
             // 判断购物车商品是否属于同一个商家
-            if (CollectionUtils.isNotEmpty(carts) && carts.stream().map(OrderCart::getStoreNo).collect(Collectors.toSet()).size() > 0) {
+            if (ObjectUtils.isNotEmpty(productSkuVos) && productSkuVos.keySet().stream().map(productSkuVo -> productSkuVo.getProductSpuVo().getStoreNo()).collect(Collectors.toSet()).size() > 0) {
                 throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("不同商家产品不能同时提交"));
             }
-            // todo 根据购物车查询商品信息 并判断是否过期， 没有过期加入到list中 并将购物车id添加到 返回值中
+            if (ObjectUtils.isEmpty(productSkuVos)) {
+                skuVoBigDecimalMap.putAll(productSkuVos);
+            }
+
         }
         // 查询商品并加入到list中
-        if (CollectionUtils.isEmpty(request.getProductSkuNoList())) {
-
-            // todo 查询 传入的商品编号列表
+        if (ObjectUtils.isEmpty(request.getProductSku())) {
+            request.getProductSku().forEach(cartRequest -> {
+                ValidatorUtil.checkNull(cartRequest.getQuantity(), "购买数量不能为空");
+                ValidatorUtil.checkBlank(cartRequest.getSkuCode(), "sku code 不能为空");
+                BigDecimal quantity = cartRequest.getQuantity();
+                if (MoneyUtils.isFirstBiggerThanOrEqualToSecond(Constant.ZERO_DECIMAL, quantity)) {
+                    throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("购买数量不能小于0"));
+                }
+            });
+            List<ProductSkuVo> productSkuList = skuManager.getProductSkuList(request.getProductSku().stream().map(productSku -> productSku.getSkuCode()).collect(Collectors.toList()));
+            if (CollectionUtils.isEmpty(productSkuList)) {
+                Map<String, BigDecimal> collect = request.getProductSku().stream().collect(Collectors.toMap(OrderSaveRequest.ProductSku::getSkuCode, OrderSaveRequest.ProductSku::getQuantity));
+                Map<ProductSkuVo, BigDecimal> productQuantityMap = productSkuList.stream().collect(Collectors.toMap(productSkuVo -> productSkuVo, productSkuVo -> collect.get(productSkuVo.getSkuNo())));
+                skuVoBigDecimalMap.putAll(productQuantityMap);
+            }
         }
-        if (CollectionUtils.isEmpty(productList)) {
+        if (ObjectUtils.isEmpty(skuVoBigDecimalMap)) {
             throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode("没有需要提交的商品"));
         }
         OrderSaveDto orderSaveDto = new OrderSaveDto();
         // 生成订单主表数据
-        buildOrderMasterInfo(tokenInfo, appId, orderSaveDto);
+        buildOrderMasterInfo(tokenInfo, appId, orderSaveDto, skuVoBigDecimalMap);
         // 生成订单商品行数据
-        buildOrderItemInfo(orderSaveDto, productList);
+        buildOrderItemInfo(orderSaveDto, skuVoBigDecimalMap);
         // 计算折扣
-        buildOrderRelishInfo(productList, orderSaveDto);
+        buildOrderRelishInfo(skuVoBigDecimalMap, orderSaveDto);
         // 生成 发票数据
         buildOrderInvoiceInfo(orderSaveDto, request);
         // 生成 用户地址信息
@@ -107,37 +128,44 @@ public class OrderCreateManager {
      * @param dto
      * @param appId
      */
-    private void buildOrderMasterInfo(TokenInfo tokenInfo, Long appId, OrderSaveDto dto) {
+    private void buildOrderMasterInfo(TokenInfo tokenInfo, Long appId, OrderSaveDto dto, Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap) {
         OrderMaster orderMaster = new OrderMaster();
+        Set<ProductSkuVo> productSkuVos = skuVoBigDecimalMap.keySet();
         orderMaster.setId(Long.valueOf(idService.generateId(IdKey.OMS_ORDER_ID)))
                 .setAppId(appId).setBuyerAccountId(tokenInfo.getAccountId()).setBuyerAccountName(tokenInfo.getAccountName())
                 // 默认创建订单待支付状态
                 .setOrderState(OrderState.WAITING_PAYMENT.getValue()).setOrderTime(new Date())
+                .setOrderTime(new Date()).setStoreNo(Lists.newArrayList(productSkuVos).get(0).getProductSpuVo().getStoreNo())
+                .setOrderTable(OrderItemTable.PERSONAL.getValue()).setOrderSource(OrderSource.AVAILABLE.getValue())
         ;
+        BigDecimal orderAmount = BigDecimal.ZERO;
+        productSkuVos.forEach(skuProduct -> {
+            MoneyUtils.add(orderAmount, skuProduct.getPrice());
+        });
+        orderMaster.setOrderAmount(orderAmount);
         // todo 缺少商品卖家信息
         dto.setOrderMaster(orderMaster);
-        // todo 填充默认的 商品item 表 类型
-        dto.setOrderDetailTable(OrderItemTable.PERSONAL.getValue());
     }
 
     /**
      * 构建 商品行信息
      * @param dto
-     * @param products
+     * @param skuVoBigDecimalMap
      */
-    private void buildOrderItemInfo(OrderSaveDto dto, List<Object> products) {
-
-        // todo
+    private void buildOrderItemInfo(OrderSaveDto dto, Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap) {
+        OrderDetailHandler handler = OrderDetailHandler.getHandler(dto.getOrderDetailTable());
+        handler.convertDoByProductSkuVo(skuVoBigDecimalMap, dto);
 
     }
 
     /**
      * 构建 订单，并返回订单的最终价格
      */
-    private BigDecimal buildOrderRelishInfo(List<Object> products, OrderSaveDto dto) {
-        // todo 暂时循环所有商品行的销售价格相加
+    private void buildOrderRelishInfo(Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap, OrderSaveDto dto) {
         OrderDetailHandler handler = OrderDetailHandler.getHandler(dto.getOrderDetailTable());
-        return handler.buildOrderDetailRelish(products, dto);
+        BigDecimal bigDecimal = handler.buildOrderDetailRelish(skuVoBigDecimalMap, dto);
+        OrderMaster orderMaster = dto.getOrderMaster();
+        orderMaster.setPayAmount(bigDecimal);
     }
 
     /**

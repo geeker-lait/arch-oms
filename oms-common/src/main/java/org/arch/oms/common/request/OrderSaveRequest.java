@@ -3,6 +3,8 @@ package org.arch.oms.common.request;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,7 +20,7 @@ public class OrderSaveRequest implements Serializable {
     /**
      * 产品编号集合
      */
-    private Set<Long> productSkuNoList;
+    private List<ProductSku> productSku;
 
     /**
      * 购物车id集合
@@ -36,6 +38,14 @@ public class OrderSaveRequest implements Serializable {
     private InvoiceInfo invoiceInfo;
 
 
+    @Data
+    public static class ProductSku {
+        // sku 编号
+        private String skuCode;
+
+        // 购买数量
+        private BigDecimal quantity;
+    }
 
 
 

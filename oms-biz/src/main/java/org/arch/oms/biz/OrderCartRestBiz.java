@@ -52,7 +52,10 @@ public class OrderCartRestBiz implements OrderCartRest {
         }
         // fixme 此出数量 可以按照应用 维度从配置中心读取
         final int cartNumMax = 10;
-        if (requests.size() > cartNumMax) {
+        LambdaQueryWrapper<OrderCart> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(OrderCart::getAppId, appId).eq(OrderCart::getBuyerAccountId, userId);
+        long count = orderCartService.countBySpec(queryWrapper);
+        if (requests.size() > cartNumMax || count + requests.size() > cartNumMax) {
             throw new BusinessException(ExceptionStatusCode.getDefaultExceptionCode(MessageFormat.format("购物车最大数量是{0}", cartNumMax)));
         }
         List<OrderCart> orderCarts = orderCartManager.buildAndCheckOrderCart(requests, userHelper.getTokenInfo(), appId);
@@ -71,11 +74,8 @@ public class OrderCartRestBiz implements OrderCartRest {
     public List<OrderCartVo> getCartList() {
         Long userId = userHelper.getUserId();
         Long appId = userHelper.getAppId();
-        LambdaQueryWrapper<OrderCart> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(OrderCart::getAppId, appId).eq(OrderCart::getBuyerAccountId, userId);
-        List<OrderCart> orderCarts = orderCartService.findAllBySpec(queryWrapper);
         // 调用获取商品规格信息是否变更，变更了批量update 购物车状态 数据
-        orderCartManager.verifyOrderCartState(orderCarts);
+        List<OrderCart> orderCarts = orderCartManager.verifyOrderCartState(appId, userId);
         // fixme 是否分组排序可以根据appId从配置获取
         boolean enableSort = true;
         if (CollectionUtils.isNotEmpty(orderCarts) && enableSort) {

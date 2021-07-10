@@ -2,6 +2,7 @@ package org.arch.oms.manager;
 
 import org.arch.oms.common.vo.OrderDetailVo;
 import org.arch.oms.dto.OrderSaveDto;
+import org.arch.pms.admin.api.res.ProductSkuVo;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,16 +33,25 @@ public abstract class OrderDetailHandler {
 
     /**
      * 创建购物车 根据 主表类型 创建对应的订单详情记录
-     * @param products
-     * @return
+     * @param skuVoBigDecimalMap
+     * @param orderSaveDto
      */
-    public abstract List<Object> convertDo(List<Object> products);
+    public abstract void convertDoByProductSkuVo(Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap, OrderSaveDto orderSaveDto);
 
     /**
      * 根据不同类型的商品行详情 创建 商品优惠信息，并返回最终的订单价格
-     * @param products
+     * @param skuVoBigDecimalMap
      * @param orderSaveDto
      * @return
      */
-    public abstract BigDecimal buildOrderDetailRelish (List<Object> products, OrderSaveDto orderSaveDto);
+    public abstract BigDecimal buildOrderDetailRelish (Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap, OrderSaveDto orderSaveDto);
+
+    protected static int getOderItemLength(int productNum) {
+        String str = "";
+        for (int i = 0; i < productNum; i++) {
+            str += "0";
+        }
+        return Integer.valueOf("1" + str);
+    }
+
 }

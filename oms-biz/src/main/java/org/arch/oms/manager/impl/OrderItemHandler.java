@@ -7,13 +7,19 @@ import org.arch.oms.common.enums.OrderItemTable;
 import org.arch.oms.common.vo.OrderDetailVo;
 import org.arch.oms.dto.OrderSaveDto;
 import org.arch.oms.entity.OrderItem;
+import org.arch.oms.entity.OrderMaster;
 import org.arch.oms.manager.OrderDetailHandler;
 import org.arch.oms.utils.BeanCopyUtil;
+import org.arch.oms.utils.MoneyUtils;
+import org.arch.pms.admin.api.res.ProductSkuVo;
+import org.arch.pms.admin.api.res.ProductSpuVo;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -35,15 +41,43 @@ public class OrderItemHandler extends OrderDetailHandler implements Initializing
     }
 
     @Override
-    public List<Object> convertDo(List<Object> products) {
-        return null;
+    public void convertDoByProductSkuVo(Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap, OrderSaveDto orderSaveDto) {
+        int oderItemLength = getOderItemLength(skuVoBigDecimalMap.size());
+        OrderMaster orderMaster = orderSaveDto.getOrderMaster();
+        final int[] index = {0};
+        List<OrderItem> collect = skuVoBigDecimalMap.entrySet().stream().map(entry -> {
+            ProductSkuVo productSkuVo = entry.getKey();
+            ProductSpuVo productSpuVo = productSkuVo.getProductSpuVo();
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrderItemNo(String.format("%0"+ oderItemLength +"d", ++index[0]));
+            orderItem.setOrderNo(orderMaster.getId());
+            orderItem.setAppId(orderMaster.getAppId());
+            orderItem.setStoreNo(orderMaster.getStoreNo());
+            orderItem.setProductNo(productSkuVo.getSpuNo());
+            orderItem.setProductPic(productSkuVo.getPic());
+            orderItem.setProductName(productSkuVo.getSkuName());
+            orderItem.setProductBrand(productSpuVo.getBrandName());
+            orderItem.setProductPrice(productSkuVo.getPrice());
+            // 价格是 数量乘以单价
+            orderItem.setProductQuantity(MoneyUtils.multiply(productSkuVo.getPrice(), entry.getValue()));
+            orderItem.setProductSkuNo(productSkuVo.getSkuNo());
+            orderItem.setProductCategoryId(productSpuVo.getCategoryId());
+            orderItem.setProductAttr(productSkuVo.getSpecJson());
+            return orderItem;
+        }).collect(Collectors.toList());
+        orderSaveDto.setOrderItem((List) collect);
+
     }
 
     @Override
-    public BigDecimal buildOrderDetailRelish(List<Object> products, OrderSaveDto orderSaveDto) {
-        // todo 现在没有处理 只返回商品行销售价格相加， 校验积分等数据
-
-        return BigDecimal.ZERO;
+    public BigDecimal buildOrderDetailRelish(Map<ProductSkuVo, BigDecimal> skuVoBigDecimalMap, OrderSaveDto orderSaveDto) {
+        BigDecimal orderAmount = BigDecimal.ZERO;
+        Set<Map.Entry<ProductSkuVo, BigDecimal>> entries = skuVoBigDecimalMap.entrySet();
+        entries.forEach(entry -> {
+            ProductSkuVo productSkuVo = entry.getKey();
+            MoneyUtils.add(orderAmount, MoneyUtils.multiply(productSkuVo.getPrice(), entry.getValue()));
+        });
+        return orderAmount;
     }
 
     @Override
